@@ -18,8 +18,8 @@
 #include <linux/regulator/consumer.h>
 #include <linux/timer.h>
 #include <linux/vmalloc.h>
-#include <aee.h>
 
+#include "osal_dbg.h"
 #include "connv3.h"
 #include "conn_adaptor.h"
 #include "connv3_hw.h"
@@ -462,7 +462,7 @@ int connv3_plt_pmic_parse_state_mt6985(char *buffer, int buf_sz)
 			log_len += snprintf(log_buf + log_len, TMP_LOG_SIZE - log_len, "LDO_PG %02X ", ldo_pg_stat);
 		log_len += snprintf(log_buf + log_len, TMP_LOG_SIZE - log_len, "\n");
 
-		aee_kernel_exception("Connv3", "%s", log_buf);
+		osal_dbg_kernel_exception("Connv3", "%s", log_buf);
 	}
 
 	/* print UDS and I2C command for more info */
