@@ -8,7 +8,11 @@
 
 #include <linux/types.h>
 
-unsigned int consys_emi_set_remapping_reg_mt6985(phys_addr_t, phys_addr_t, phys_addr_t);
+unsigned int consys_emi_set_remapping_reg_mt6985(phys_addr_t con_emi_base_addr,
+	phys_addr_t md_shared_emi_base_addr, phys_addr_t gps_emi_base_addr);
+unsigned int consys_emi_set_remapping_reg_mt6985_atf(phys_addr_t con_emi_base_addr,
+	phys_addr_t md_shared_emi_base_addr, phys_addr_t gps_emi_base_addr);
+
 bool consys_is_rc_mode_enable_mt6985(void);
 int consys_conninfra_on_power_ctrl_mt6985(unsigned int enable);
 int consys_polling_chipid_mt6985(void);
