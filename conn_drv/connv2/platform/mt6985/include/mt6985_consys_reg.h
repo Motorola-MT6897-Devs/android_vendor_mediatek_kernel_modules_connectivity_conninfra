@@ -25,6 +25,7 @@ enum connsys_base_addr_index {
 	CONN_SEMAPHORE_BASE_INDEX	= 13,	/* 0x1807_0000 */
 	CONN_AFE_CTL_BASE_INDEX		= 14,	/* 0x1804_1000 */
 	VLPSYS_SRCLKENRC		= 15,	/* 0x1c00_d000 */
+	CONN_INFRA_DBG_CTL_BASE_INDEX	= 16,	/* 0x1802_3000 size: 0x1000 */
 	CONSYS_BASE_ADDR_MAX
 };
 
@@ -50,5 +51,7 @@ extern struct consys_base_addr g_conn_reg_mt6985;
 #define CONN_SEMAPHORE_BASE_ADDR_MT6985		g_conn_reg_mt6985.reg_base_addr[CONN_SEMAPHORE_BASE_INDEX].vir_addr
 #define CONN_AFE_CTL_ADDR_MT6985		g_conn_reg_mt6985.reg_base_addr[CONN_AFE_CTL_BASE_INDEX].vir_addr
 #define VLPSYS_SRCLKENRC_MT6985			g_conn_reg_mt6985.reg_base_addr[VLPSYS_SRCLKENRC].vir_addr
+#define CONN_REG_CONN_INFRA_DBG_CTL_ADDR_MT6985	g_conn_reg_mt6985.reg_base_addr[CONN_INFRA_DBG_CTL_BASE_INDEX].vir_addr
+
 
 #endif /* _PLATFORM_MT6985_CONSYS_REG_H_ */
