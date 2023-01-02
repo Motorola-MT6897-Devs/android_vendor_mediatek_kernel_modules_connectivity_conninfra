@@ -14,6 +14,7 @@
 #include "consys_hw.h"
 #include "consys_reg_mng.h"
 #include "consys_reg_util.h"
+#include "connsys_smc.h"
 
 #include "mt6985.h"
 #include "mt6985_pos.h"
@@ -26,8 +27,10 @@ static int consys_clk_get_from_dts_mt6985(struct platform_device *pdev);
 static int consys_clock_buffer_ctrl_mt6985(unsigned int enable);
 static unsigned int consys_soc_chipid_get_mt6985(void);
 static unsigned int consys_get_hw_ver_mt6985(void);
+static int consys_init_atf_data_mt6985_atf(void);
 
 struct consys_hw_ops_struct g_consys_hw_ops_mt6985 = {
+	.consys_plt_init_atf_data = consys_init_atf_data_mt6985_atf,
 	.consys_plt_clk_get_from_dts = consys_clk_get_from_dts_mt6985,
 	.consys_plt_clock_buffer_ctrl = consys_clock_buffer_ctrl_mt6985,
 	.consys_plt_co_clock_type = consys_co_clock_type_mt6985,
@@ -170,3 +173,20 @@ int consys_co_clock_type_mt6985(void)
 	return clock_type;
 }
 
+int consys_init_atf_data_mt6985_atf(void)
+{
+	struct arm_smccc_res res;
+	int platform_config;
+	static bool initialized = 0;
+	int ret;
+
+	if (initialized == 1)
+		return 0;
+
+	platform_config = consys_hw_get_platform_config();
+	arm_smccc_smc(MTK_SIP_KERNEL_CONNSYS_CONTROL, SMC_CONNSYS_INIT_ATF_DATA_OPID,
+		platform_config, conn_hw_env.clock_type, 0, 0, 0, 0, &res);
+	ret = res.a0;
+	initialized = 1;
+	return ret;
+}
