@@ -860,12 +860,6 @@ int connsys_low_power_setting_mt6985_gen(void)
 	CONSYS_CLR_BIT(CONN_OFF_DEBUG_CTRL_AO_BASE +
 		CONSYS_GEN_INFRA_OFF_DCTRL_AO_1804D000_OFFSET, (0x1U << 9));
 
-	/* enable conn_infra bus bpll div_1 */
-	#ifndef CONFIG_FPGA_EARLY_PORTING
-		CONSYS_SET_BIT(CONN_CLKGEN_TOP_BASE +
-			CONSYS_GEN_CKGEN_BUS_BPLL_DIV_1_OFFSET_ADDR, (0x1U << 0));
-	#endif
-
 	/* enable conn_infra bus bpll div_2 */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		CONSYS_SET_BIT(CONN_CLKGEN_TOP_BASE +
