@@ -22,7 +22,9 @@ unsigned int consys_emi_set_remapping_reg_mt6985_atf(
 	phys_addr_t gps_emi_base_addr)
 {
 	int ret;
+
 	CONNSYS_SMC_CALL_RET(SMC_CONNSYS_EMI_SET_REMAPPING_REG_OPID,
 			     0, 0, 0, 0, 0, 0, ret);
+
 	return ret;
 }
