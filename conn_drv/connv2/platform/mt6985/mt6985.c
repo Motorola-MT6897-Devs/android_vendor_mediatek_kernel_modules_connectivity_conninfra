@@ -4,6 +4,7 @@
  */
 
 #include <linux/of.h>
+#include <linux/pm_runtime.h>
 #include <linux/regmap.h>
 #include <linux/types.h>
 
@@ -79,13 +80,47 @@ const struct conninfra_plat_data mt6985_plat_data = {
 
 int consys_clk_get_from_dts_mt6985(struct platform_device *pdev)
 {
+	pm_runtime_enable(&pdev->dev);
+	dev_pm_syscore_device(&pdev->dev, true);
+
 	return 0;
 }
 
 int consys_platform_spm_conn_ctrl_mt6985(unsigned int enable)
 {
 	int ret = 0;
+	struct platform_device *pdev = get_consys_device();
 
+	if (!pdev) {
+		pr_info("get_consys_device fail.\n");
+		return -1;
+	}
+
+	if (enable) {
+		ret = pm_runtime_get_sync(&(pdev->dev));
+		if (ret)
+			pr_info("pm_runtime_get_sync() fail(%d)\n", ret);
+		else
+			pr_info("pm_runtime_get_sync() CONSYS ok\n");
+
+		ret = device_init_wakeup(&(pdev->dev), true);
+		if (ret)
+			pr_info("device_init_wakeup(true) fail.\n");
+		else
+			pr_info("device_init_wakeup(true) CONSYS ok\n");
+	} else {
+		ret = device_init_wakeup(&(pdev->dev), false);
+		if (ret)
+			pr_info("device_init_wakeup(false) fail.\n");
+		else
+			pr_info("device_init_wakeup(false) CONSYS ok\n");
+
+		ret = pm_runtime_put_sync(&(pdev->dev));
+		if (ret)
+			pr_info("pm_runtime_put_sync() fail.\n");
+		else
+			pr_info("pm_runtime_put_sync() CONSYS ok\n");
+	}
 
 	return ret;
 }
