@@ -735,13 +735,14 @@ static void dump_adie_cr(enum sys_spi_subsystem subsystem, const unsigned int *a
 
 static int consys_plt_pmic_event_notifier_mt6897(unsigned int id, unsigned int event)
 {
-#define ATOP_DUMP_NUM 12
+#define ATOP_DUMP_NUM 16
 #define ABT_DUMP_NUM 6
 #define AWF_DUMP_NUM 3
 	int ret;
 	const unsigned int adie_top_cr_list[ATOP_DUMP_NUM] = {
-		0x03C, 0x090, 0x094, 0x0A0,
-		0x0C8, 0x0FC, 0xA10, 0xB00,
+		0x03C, 0xB00, 0x0C8, 0xA10,
+		0x090, 0xa10, 0x03C, 0xB00,
+		0x0C8, 0x094, 0x0A0, 0x0FC,
 		0xAFC, 0x160, 0xC54, 0xC58,
 	};
 	const unsigned int adie_bt_cr_list[ABT_DUMP_NUM] = {
