@@ -713,35 +713,38 @@ static int consys_pmic_vant18_power_ctl_mt6897(bool enable)
 	return ret;
 }
 
+#define LOG_ADIE_REG_ARRAY_SZ 512
+char adie_reg_array_buf[LOG_ADIE_REG_ARRAY_SZ] = {'\0'};
 static void dump_adie_cr(enum sys_spi_subsystem subsystem, const unsigned int *adie_cr, int num, char *title)
 {
-#define LOG_TMP_BUF_SZ 256
+#define LOG_TMP_REG_SZ 32
+	char tmp[LOG_TMP_REG_SZ] = {'\0'};
 	unsigned int adie_value;
-	char tmp[LOG_TMP_BUF_SZ] = {'\0'};
-	char tmp_buf[LOG_TMP_BUF_SZ] = {'\0'};
 	int i;
 
-	memset(tmp_buf, '\0', LOG_TMP_BUF_SZ);
+	memset(adie_reg_array_buf, '\0', LOG_ADIE_REG_ARRAY_SZ);
 	for (i = 0; i < num; i++) {
 		if (consys_hw_spi_read(subsystem, adie_cr[i], &adie_value) < 0) {
 			pr_notice("[%s] consys_hw_spi_read failed\n", __func__);
 			continue;
 		}
-		if (snprintf(tmp, LOG_TMP_BUF_SZ, "[0x%04x: 0x%08x]", adie_cr[i], adie_value) >= 0)
-			strncat(tmp_buf, tmp, strlen(tmp));
+		if (snprintf(tmp, LOG_TMP_REG_SZ, "[0x%04x: 0x%08x]", adie_cr[i], adie_value) >= 0)
+			strncat(adie_reg_array_buf, tmp,
+				LOG_ADIE_REG_ARRAY_SZ - strlen(adie_reg_array_buf) - 1);
 	}
-	pr_info("%s:%s\n", title, tmp_buf);
+	pr_info("%s:%s\n", title, adie_reg_array_buf);
 }
 
 static int consys_plt_pmic_event_notifier_mt6897(unsigned int id, unsigned int event)
 {
-#define ATOP_DUMP_NUM 12
+#define ATOP_DUMP_NUM 16
 #define ABT_DUMP_NUM 6
 #define AWF_DUMP_NUM 3
 	int ret;
 	const unsigned int adie_top_cr_list[ATOP_DUMP_NUM] = {
-		0x03C, 0x090, 0x094, 0x0A0,
-		0x0C8, 0x0FC, 0xA10, 0xB00,
+		0x03C, 0xB00, 0x0C8, 0xA10,
+		0x090, 0xa10, 0x03C, 0xB00,
+		0x0C8, 0x094, 0x0A0, 0x0FC,
 		0xAFC, 0x160, 0xC54, 0xC58,
 	};
 	const unsigned int adie_bt_cr_list[ABT_DUMP_NUM] = {
