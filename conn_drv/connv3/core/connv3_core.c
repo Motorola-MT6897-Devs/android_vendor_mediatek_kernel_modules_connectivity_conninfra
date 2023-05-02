@@ -314,6 +314,8 @@ static int opfunc_power_on_internal(unsigned int drv_type)
 			drv_inst = &g_connv3_ctx.drv_inst[i];
 			ret = msg_thread_send_1(&drv_inst->msg_ctx,
 					CONNV3_SUBDRV_OPID_PWR_ON_NOTIFY, i);
+			if (drv_inst->ops_cb.pwr_on_cb.power_on_notify)
+				drv_inst->drv_status = DRV_STS_PRE_POWER_ON;
 		}
 	} else {
 		/* second/third radio power on */
@@ -335,17 +337,6 @@ static int opfunc_power_on_internal(unsigned int drv_type)
 			cur_pre_on_state = atomic_read(&g_connv3_ctx.pre_pwr_state);
 			pr_info("[pre_pwr_on] [%s] pre-callback is not back", connv3_drv_thread_name[drv_type]);
 			osal_thread_show_stack(&drv_inst->msg_ctx.thread);
-		}
-
-		/* Set VANT18 when second radio WiFi is on */
-		connv3_core_wake_lock_get();
-		ret = connv3_hw_pwr_on(opfunc_get_current_status(), drv_type);
-		connv3_core_wake_lock_put();
-
-		if (ret) {
-			pr_err("Connv3 second radio power on fail. drv(%d) ret=(%d)\n", drv_type, ret);
-			osal_unlock_sleepable_lock(&ctx->core_lock);
-			return ret;
 		}
 	}
 
