@@ -644,15 +644,17 @@ void connsys_afe_sw_patch_mt6989_gen(void)
 
 	check = CONSYS_REG_READ_BIT(vir_addr_consys_gen_afe_efuse_base_addr +
 		CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR, (0x1U << 4));
+	pr_info("[%s] efuse 0x11f1_0218[4]=[0x%x]\n", __func__, check);
 
-	if (check == 1) {
+	if (check == (0x1U << 4)) {
 		efuse_val = CONSYS_REG_READ(vir_addr_consys_gen_afe_efuse_base_addr +
 			CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR);
 		efuse_val = (efuse_val & 0xf);
+		pr_info("[%s] efuse val=[0x%x]\n", __func__, efuse_val);
 		CONSYS_REG_WRITE_MASK(CONN_AFE_CTL_BASE +
 			CONSYS_GEN_RG_WBG_AFE_01_ADDR, efuse_val, 0xf);
 	} else {
-		pr_notice("[%s] Efuse gnss bg valid check fail\n", __func__);
+		pr_notice("[%s] efuse gnss bg valid check fail\n", __func__);
 	}
 
 	iounmap(vir_addr_consys_gen_afe_efuse_base_addr);
