@@ -142,14 +142,14 @@ int consys_subsys_status_update_mt6989(bool on, int radio)
 	}
 
 	if (on)
-		CONSYS_SET_BIT(CONN_INFRA_SYSRAM_SW_CR_RADIO_STATUS, (0x1 << radio));
+		CONSYS_SET_BIT(CONN_INFRA_SYSRAM_SW_CR_RADIO_STATUS, (0x1U << radio));
 	else
-		CONSYS_CLR_BIT(CONN_INFRA_SYSRAM_SW_CR_RADIO_STATUS, (0x1 << radio));
+		CONSYS_CLR_BIT(CONN_INFRA_SYSRAM_SW_CR_RADIO_STATUS, (0x1U << radio));
 
 	return 0;
 }
 
-int consys_sema_acquire_mt6989(unsigned int index)
+static int consys_sema_acquire_mt6989(unsigned int index)
 {
 	if (index >= CONN_SEMA_NUM_MAX)
 		return CONN_SEMA_GET_FAIL;
@@ -196,7 +196,7 @@ void consys_sema_release_mt6989(unsigned int index)
 
 	duration = jiffies_to_msecs(jiffies - g_sema_get_time[index]);
 	if (duration > SEMA_HOLD_TIME_THRESHOLD)
-		pr_notice("%s hold semaphore (%d) for %llu ms\n", __func__, index, duration);
+		pr_notice("%s hold semaphore (%d) for %lu ms\n", __func__, index, duration);
 }
 
 struct spi_op {
@@ -242,7 +242,7 @@ static const struct spi_op spi_op_array[SYS_SPI_MAX] = {
 	{false, },
 };
 
-int consys_spi_read_nolock_mt6989(
+static int consys_spi_read_nolock_mt6989(
 	enum sys_spi_subsystem subsystem, unsigned int addr, unsigned int *data)
 {
 	/* Read action:
@@ -268,8 +268,9 @@ int consys_spi_read_nolock_mt6989(
 	CONSYS_REG_BIT_POLLING(
 		CONN_RF_SPI_MST_REG_BASE + op->busy_cr, op->polling_bit, 0, 100, 50, check);
 	if (check != 0) {
-		pr_err("[%s][%s][STEP1] polling 0x%08x bit %d fail. Value=0x%08x\n",
-			__func__, get_spi_sys_name(subsystem), CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
+		pr_err("[%s][%s][STEP1] polling 0x%08lx bit %d fail. Value=0x%08x\n",
+			__func__, get_spi_sys_name(subsystem),
+			CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
 			op->polling_bit,
 			CONSYS_REG_READ(CONN_RF_SPI_MST_REG_BASE + op->busy_cr));
 		return CONNINFRA_SPI_OP_FAIL;
@@ -286,7 +287,7 @@ int consys_spi_read_nolock_mt6989(
 	CONSYS_REG_BIT_POLLING(
 		CONN_RF_SPI_MST_REG_BASE + op->busy_cr, op->polling_bit, 0, 100, 50, check);
 	if (check != 0) {
-		pr_err("[%s][%d][STEP4] polling 0x%08x bit %d fail. Value=0x%08x\n",
+		pr_err("[%s][%d][STEP4] polling 0x%08lx bit %d fail. Value=0x%08x\n",
 			__func__, subsystem, CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
 			op->polling_bit,
 			CONSYS_REG_READ(CONN_RF_SPI_MST_REG_BASE + op->busy_cr));
@@ -300,11 +301,13 @@ int consys_spi_read_nolock_mt6989(
 	return 0;
 }
 
-int consys_spi_read_mt6989(enum sys_spi_subsystem subsystem, unsigned int addr, unsigned int *data)
+int consys_spi_read_mt6989(
+	enum sys_spi_subsystem subsystem, unsigned int addr, unsigned int *data)
 {
 	int ret = 0;
 	/* Get semaphore before read */
-	if (consys_sema_acquire_timeout_mt6989(CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
+	if (consys_sema_acquire_timeout_mt6989(
+		CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
 		pr_err("[SPI READ] Require semaphore fail\n");
 		return CONNINFRA_SPI_OP_FAIL;
 	}
@@ -315,7 +318,8 @@ int consys_spi_read_mt6989(enum sys_spi_subsystem subsystem, unsigned int addr, 
 	return ret;
 }
 
-int consys_spi_write_nolock_mt6989(enum sys_spi_subsystem subsystem, unsigned int addr, unsigned int data)
+static int consys_spi_write_nolock_mt6989(
+	enum sys_spi_subsystem subsystem, unsigned int addr, unsigned int data)
 {
 #ifndef CONFIG_FPGA_EARLY_PORTING
 	int check = 0;
@@ -333,8 +337,9 @@ int consys_spi_write_nolock_mt6989(enum sys_spi_subsystem subsystem, unsigned in
 		CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
 		op->polling_bit, 0, 100, 50, check);
 	if (check != 0) {
-		pr_err("[%s][%s][STEP1] polling 0x%08x bit %d fail. Value=0x%08x\n",
-			__func__, get_spi_sys_name(subsystem), CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
+		pr_err("[%s][%s][STEP1] polling 0x%08lx bit %d fail. Value=0x%08x\n",
+			__func__, get_spi_sys_name(subsystem),
+			CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
 			op->polling_bit,
 			CONSYS_REG_READ(CONN_RF_SPI_MST_REG_BASE + op->busy_cr));
 		return CONNINFRA_SPI_OP_FAIL;
@@ -347,10 +352,12 @@ int consys_spi_write_nolock_mt6989(enum sys_spi_subsystem subsystem, unsigned in
 #ifndef CONFIG_FPGA_EARLY_PORTING
 	udelay(1);
 	check = 0;
-	CONSYS_REG_BIT_POLLING(CONN_RF_SPI_MST_REG_BASE + op->busy_cr, op->polling_bit, 0, 100, 50, check);
+	CONSYS_REG_BIT_POLLING(CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
+		op->polling_bit, 0, 100, 50, check);
 	if (check != 0) {
-		pr_err("[%s][%s][STEP4] polling 0x%08x bit %d fail. Value=0x%08x\n",
-			__func__, get_spi_sys_name(subsystem), CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
+		pr_err("[%s][%s][STEP4] polling 0x%08lx bit %d fail. Value=0x%08x\n",
+			__func__, get_spi_sys_name(subsystem),
+			CONN_RF_SPI_MST_REG_BASE + op->busy_cr,
 			op->polling_bit,
 			CONSYS_REG_READ(CONN_RF_SPI_MST_REG_BASE + op->busy_cr));
 		return CONNINFRA_SPI_OP_FAIL;
@@ -364,7 +371,8 @@ int consys_spi_write_mt6989(enum sys_spi_subsystem subsystem, unsigned int addr,
 {
 	int ret = 0;
 	/* Get semaphore before read */
-	if (consys_sema_acquire_timeout_mt6989(CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
+	if (consys_sema_acquire_timeout_mt6989(
+		CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
 		pr_err("[SPI WRITE] Require semaphore fail\n");
 		return CONNINFRA_SPI_OP_FAIL;
 	}
@@ -384,7 +392,8 @@ int consys_spi_update_bits_mt6989(
 	bool change = false;
 
 	/* Get semaphore before updating bits */
-	if (consys_sema_acquire_timeout_mt6989(CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
+	if (consys_sema_acquire_timeout_mt6989(
+		CONN_SEMA_RFSPI_INDEX, CONN_SEMA_TIMEOUT) == CONN_SEMA_GET_FAIL) {
 		pr_err("[SPI WRITE] Require semaphore fail\n");
 		return CONNINFRA_SPI_OP_FAIL;
 	}

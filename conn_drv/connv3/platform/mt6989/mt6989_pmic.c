@@ -25,6 +25,8 @@
 #include "connv3_hw.h"
 #include "connv3_pmic_mng.h"
 #include "consys_reg_util.h"
+#include "connv3_mt6989_pmic.h"
+#include "consys_reg_util.h"
 
 /*******************************************************************************
 *                         C O M P I L E R   F L A G S
@@ -64,14 +66,12 @@ int connv3_plt_pmic_initial_setting_mt6989(struct platform_device *pdev, struct 
 int connv3_plt_pmic_common_power_ctrl_mt6989(u32 enable);
 int connv3_plt_pmic_vsel_ctrl_mt6989(u32 enable);
 int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz);
-static int connv3_plt_pmic_antenna_power_ctrl_mt6989(u32 radio, u32 enable);
 
 const struct connv3_platform_pmic_ops g_connv3_platform_pmic_ops_mt6989 = {
 	.pmic_initial_setting = connv3_plt_pmic_initial_setting_mt6989,
 	.pmic_common_power_ctrl = connv3_plt_pmic_common_power_ctrl_mt6989,
 	.pmic_vsel_ctrl = connv3_plt_pmic_vsel_ctrl_mt6989,
 	.pmic_parse_state = connv3_plt_pmic_parse_state_mt6989,
-	.pmic_antenna_power_ctrl = connv3_plt_pmic_antenna_power_ctrl_mt6989,
 };
 
 struct work_struct g_pmic_faultb_work_mt6989;
@@ -145,6 +145,14 @@ static void _dump_pmic_gpio_state(void)
 
 int connv3_plt_pmic_initial_setting_mt6989(struct platform_device *pdev, struct connv3_dev_cb* dev_cb)
 {
+#ifndef CONFIG_FPGA_EARLY_PORTING
+#if COMMON_KERNEL_PMIC_SUPPORT
+	#define SRCLKENRC_BASE_ADDR                 0x1c00d000
+	#define SRCLKENRC_RC_CENTRAL_CFG1_OFFSET    0x4
+	bool is_rc_mode = false;
+	mapped_addr vir_addr_srclkenrc_base = NULL;
+#endif
+#endif
 	struct pinctrl_state *pinctrl_faultb_init;
 	int ret = 0;
 	unsigned int irq_num = 0;
@@ -200,6 +208,37 @@ int connv3_plt_pmic_initial_setting_mt6989(struct platform_device *pdev, struct 
 		return ret;
 	}
 	g_pmic_excep_irq_num_mt6989 = irq_num;
+
+#ifndef CONFIG_FPGA_EARLY_PORTING
+#if COMMON_KERNEL_PMIC_SUPPORT
+	/* Set RC VANT18 */
+	vir_addr_srclkenrc_base = ioremap(SRCLKENRC_BASE_ADDR, 0x100);
+
+	if (!vir_addr_srclkenrc_base) {
+		pr_notice("[%s] vir_addr_srclkenrc_base(0x%x) ioremap fail\n", __func__,
+			SRCLKENRC_BASE_ADDR);
+	} else {
+		is_rc_mode = (bool)CONSYS_REG_READ_BIT(vir_addr_srclkenrc_base +
+			SRCLKENRC_RC_CENTRAL_CFG1_OFFSET, 0x1);
+		if (is_rc_mode && g_connv3_regmap_mt6373) {
+			/* Full HW signal control, only need config it. */
+			/* 1. set PMIC VANT18 LDO PMIC HW mode control by PMRC_EN[10]
+			 * 1.1. set PMIC VANT18 LDO op_mode = 0
+			 * 1.2. set PMIC VANT18 LDO  HW_OP_EN = 1, HW_OP_CFG = 0
+			 */
+			regmap_update_bits(g_connv3_regmap_mt6373,
+				MT6373_RG_LDO_VANT18_RC10_OP_MODE_ADDR, 1 << 2, 0 << 2);
+			regmap_update_bits(g_connv3_regmap_mt6373,
+				MT6373_RG_LDO_VANT18_RC10_OP_EN_ADDR,   1 << 2, 1 << 2);
+			regmap_update_bits(g_connv3_regmap_mt6373,
+				MT6373_RG_LDO_VANT18_RC10_OP_CFG_ADDR,  1 << 2, 0 << 2);
+			pr_info("[%s] set rc vant18 done\n", __func__);
+		}
+
+		iounmap(vir_addr_srclkenrc_base);
+	}
+#endif
+#endif
 
 	return 0;
 }
@@ -526,53 +565,4 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 			__func__, uds_status, (i2c_last_dev == 0x0)?"PMIC":"BUCK", i2c_last_addr, i2c_last_wdata);
 
 	return 0;
-}
-
-int connv3_plt_pmic_antenna_power_ctrl_mt6989(u32 radio, u32 enable)
-{
-	int ret = 0;
-	static bool is_on = false;
-
-	if (g_reg_VANT18 == NULL) {
-		pr_notice("[%s][%d] g_reg_VANT18 is NULL!\n", __func__, enable);
-		return -1;
-	}
-
-	if (!conn_adaptor_is_internal()) {
-		pr_notice("[%s] external project, ignore setting\n", __func__);
-		return 0;
-	}
-
-	if (radio != CONNV3_DRV_TYPE_WIFI)
-		return 0;
-
-	/* Status check
-	 * because connv3_plt_pmic_antenna_power_ctrl_mt6989 off may be called multiple times,
-	 * we have to maintain the status to avoid incorrect status change.
-	 */
-	if (is_on && enable == 1) {
-		return 0;
-	}
-
-	if (!is_on && enable == 0) {
-		return 0;
-	}
-
-	if (enable) {
-		ret = regulator_enable(g_reg_VANT18); /* SW_EN = 1 */
-		if (ret)
-			pr_notice("[%s] enable VANT18 fail. ret=%d\n", __func__, ret);
-		else
-			pr_info("[%s] enable VANT18 successfully\n", __func__);
-		is_on = true;
-	} else {
-		ret = regulator_disable(g_reg_VANT18);
-		if (ret)
-			pr_notice("[%s] disable VANT18 fail. ret=%d\n", __func__, ret);
-		else
-			pr_info("[%s] disable VANT18 successfully\n", __func__);
-		is_on = false;
-	}
-
-	return ret;
 }

@@ -11,7 +11,7 @@
  * It should not be modified by hand.
  *
  * Reference POS file,
- * - Lxxxy_power_on_sequence_20230331.xlsx
+ * - Lxxxy_power_on_sequence_20230414.xlsx
  * - Lxxxy_conn_infra_sub_task_initial.xlsx
  * - conn_infra_cmdbt_instr_autogen_lxxxy_20230411.txt
  */
@@ -166,7 +166,7 @@ const unsigned int g_cmdbt_dwn_value_ary_mt6989[1024] = {
 
 void consys_set_gpio_tcxo_mode_mt6989_gen(unsigned int tcxo_mode, unsigned int enable)
 {
-	// No TCXO support for mt6989
+	/* No TCXO support for mt6989 */
 }
 
 int consys_conninfra_on_power_ctrl_mt6989_gen(unsigned int enable)
@@ -617,44 +617,46 @@ void connsys_wt_slp_top_ctrl_adie6686_mt6989_gen(void)
 
 void connsys_afe_sw_patch_mt6989_gen(void)
 {
-	#ifndef CONFIG_FPGA_EARLY_PORTING
-		mapped_addr vir_addr_consys_gen_afe_efuse_base_addr = NULL;
-		unsigned int check = 0;
-		unsigned int efuse_val = 0;
+#ifndef CONFIG_FPGA_EARLY_PORTING
+	mapped_addr vir_addr_consys_gen_afe_efuse_base_addr = NULL;
+	unsigned int check = 0;
+	unsigned int efuse_val = 0;
 
-		if (CONN_AFE_CTL_BASE == 0) {
-			pr_notice("CONN_AFE_CTL_BASE is not defined\n");
-			return;
-		}
+	if (CONN_AFE_CTL_BASE == 0) {
+		pr_notice("CONN_AFE_CTL_BASE is not defined\n");
+		return;
+	}
 
-		/* default value update 1: AFE WBG CR (if needed),
-		 * note that this CR must be backuped and restored by command batch engine
-		 * if (Efuse 0x11F1_0218[4]==1) { //Efuse_GNSS_BG_Valid
-		 *   CONN_AFE_CTL_RG_WBG_AFE_01[3:0] = Efuse 0x11F1_0218[3:0]
-		 * }
-		 */
-		vir_addr_consys_gen_afe_efuse_base_addr =
-		ioremap(CONSYS_GEN_AFE_EFUSE_BASE_ADDR, 0x1000);
+	/* default value update 1: AFE WBG CR (if needed),
+	 * note that this CR must be backuped and restored by command batch engine
+	 * if (Efuse 0x11F1_0218[4]==1) { //Efuse_GNSS_BG_Valid
+	 *   CONN_AFE_CTL_RG_WBG_AFE_01[3:0] = Efuse 0x11F1_0218[3:0]
+	 * }
+	 */
+	vir_addr_consys_gen_afe_efuse_base_addr =
+	ioremap(CONSYS_GEN_AFE_EFUSE_BASE_ADDR, 0x1000);
 
-		if (!vir_addr_consys_gen_afe_efuse_base_addr) {
-			pr_notice("vir_addr_consys_gen_afe_efuse_base_addr(%x) ioremap fail\n",
-				CONSYS_GEN_AFE_EFUSE_BASE_ADDR);
-			return;
-		}
+	if (!vir_addr_consys_gen_afe_efuse_base_addr) {
+		pr_notice("vir_addr_consys_gen_afe_efuse_base_addr(%x) ioremap fail\n",
+			CONSYS_GEN_AFE_EFUSE_BASE_ADDR);
+		return;
+	}
 
-		check = CONSYS_REG_READ_BIT(vir_addr_consys_gen_afe_efuse_base_addr +
-			CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR, (0x1 << 4));
+	check = CONSYS_REG_READ_BIT(vir_addr_consys_gen_afe_efuse_base_addr +
+		CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR, (0x1U << 4));
 
-		if (check == 1) {
-			efuse_val = CONSYS_REG_READ(vir_addr_consys_gen_afe_efuse_base_addr +
-				CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR);
-			efuse_val = (efuse_val & 0xf);
-			CONSYS_REG_WRITE_MASK(CONN_AFE_CTL_BASE +
-				CONSYS_GEN_RG_WBG_AFE_01_ADDR, efuse_val, 0xf);
-		} else {
-			pr_notice("[%s] Efuse gnss bg valid check fail\n", __func__);
-		}
-	#endif
+	if (check == 1) {
+		efuse_val = CONSYS_REG_READ(vir_addr_consys_gen_afe_efuse_base_addr +
+			CONSYS_GEN_AFE_EFUSE_OFFSET_ADDR);
+		efuse_val = (efuse_val & 0xf);
+		CONSYS_REG_WRITE_MASK(CONN_AFE_CTL_BASE +
+			CONSYS_GEN_RG_WBG_AFE_01_ADDR, efuse_val, 0xf);
+	} else {
+		pr_notice("[%s] Efuse gnss bg valid check fail\n", __func__);
+	}
+
+	iounmap(vir_addr_consys_gen_afe_efuse_base_addr);
+#endif
 }
 
 int connsys_subsys_pll_initial_xtal_26000k_mt6989_gen(void)

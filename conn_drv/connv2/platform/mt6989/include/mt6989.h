@@ -6,11 +6,10 @@
 #ifndef MT6989_H
 #define MT6989_H
 
-#define CONN_HW_VER_MT6989		0x02050500
-#define CONNSYS_A_DIE_ID_MT6989		0x6686
+#define CONN_HW_VER_MT6989          0x02050500
+#define CONNSYS_A_DIE_ID_MT6989     0x6686
 
-enum conn_semaphore_type
-{
+enum conn_semaphore_type {
 	CONN_SEMA_CHIP_POWER_ON_INDEX = 0,
 	CONN_SEMA_CALIBRATION_INDEX = 1,
 	CONN_SEMA_CLOCK_SWITCH_INDEX = 2,

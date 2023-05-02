@@ -22,7 +22,7 @@ int consys_conninfra_wakeup_mt6989(void);
 int consys_conninfra_sleep_mt6989(void);
 void connsys_afe_sw_patch_mt6989(void);
 int connsys_subsys_pll_initial_mt6989(void);
-int connsys_low_power_setting_mt6989(unsigned int, unsigned int);
+int connsys_low_power_setting_mt6989(unsigned int curr_status, unsigned int next_status);
 int consys_subsys_status_update_mt6989(bool on, int radio);
 
 int consys_spi_read_mt6989(

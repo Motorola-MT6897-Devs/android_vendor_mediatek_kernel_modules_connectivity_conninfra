@@ -11,7 +11,7 @@
  * It should not be modified by hand.
  *
  * Reference POS file,
- * - Lxxxy_power_on_sequence_20230331.xlsx
+ * - Lxxxy_power_on_sequence_20230414.xlsx
  * - Lxxxy_conn_infra_sub_task_initial.xlsx
  * - conn_infra_cmdbt_instr_autogen_lxxxy_20230411.txt
  */

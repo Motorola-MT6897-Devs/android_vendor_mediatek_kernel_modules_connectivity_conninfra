@@ -20,37 +20,12 @@ static struct regulator *reg_VRFIO18; /* MT6363 workaround VCN15 -> VRFIO18 */
 static struct regulator *reg_VANT18;
 
 static int consys_plt_pmic_get_from_dts_mt6989(struct platform_device*, struct conninfra_dev_cb*);
-static int consys_plt_pmic_common_power_ctrl_mt6989(unsigned int);
 static int consys_plt_pmic_gps_power_ctrl_mt6989(unsigned int);
 
 const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6989 = {
 	.consys_pmic_get_from_dts = consys_plt_pmic_get_from_dts_mt6989,
-	.consys_pmic_common_power_ctrl = consys_plt_pmic_common_power_ctrl_mt6989,
 	.consys_pmic_gps_power_ctrl = consys_plt_pmic_gps_power_ctrl_mt6989,
 };
-
-static int consys_plt_pmic_common_power_ctrl_mt6989(unsigned int enable)
-{
-	static bool setup = false;
-
-	if (consys_is_rc_mode_enable_mt6989() && enable) {
-		/* Full HW signal control, only need config it. */
-		if (!setup) {
-			/* 1. set PMIC VANT18 LDO PMIC HW mode control by PMRC_EN[10]
-			 * 1.1. set PMIC VANT18 LDO op_mode = 0
-			 * 1.2. set PMIC VANT18 LDO  HW_OP_EN = 1, HW_OP_CFG = 0
-			 */
-			regmap_update_bits(g_regmap_mt6373,
-				MT6373_RG_LDO_VANT18_RC10_OP_MODE_ADDR, 1 << 2, 0 << 2);
-			regmap_update_bits(g_regmap_mt6373,
-				MT6373_RG_LDO_VANT18_RC10_OP_EN_ADDR,   1 << 2, 1 << 2);
-			regmap_update_bits(g_regmap_mt6373,
-				MT6373_RG_LDO_VANT18_RC10_OP_CFG_ADDR,  1 << 2, 0 << 2);
-			setup = true;
-		}
-	}
-	return 0;
-}
 
 int consys_plt_pmic_get_from_dts_mt6989(struct platform_device* pdev, struct conninfra_dev_cb* cb)
 {
