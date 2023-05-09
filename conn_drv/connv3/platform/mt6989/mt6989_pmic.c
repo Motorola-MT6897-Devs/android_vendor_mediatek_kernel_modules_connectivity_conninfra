@@ -77,7 +77,6 @@ const struct connv3_platform_pmic_ops g_connv3_platform_pmic_ops_mt6989 = {
 struct work_struct g_pmic_faultb_work_mt6989;
 unsigned int g_pmic_excep_irq_num_mt6989 = 0;
 unsigned int g_spurious_pmic_exception_mt6989 = 1;
-unsigned int g_faultb_immediately_mt6989 = 0;
 int g_faultb_gpio_mt6989 = 0, g_pmic_en_gpio_mt6989 = 0;
 static irqreturn_t pmic_fault_handler(int irq, void * arg)
 {
@@ -96,15 +95,14 @@ static void check_faultb_status(struct work_struct *work)
 {
 	unsigned int faultb_level;
 
-	if (g_faultb_immediately_mt6989 == 0) {
-		mdelay(10);
+	mdelay(10);
 
-		faultb_level = gpio_get_value(g_faultb_gpio_mt6989);
-		pr_info("[%s] PMIC_EN=%d, faultb=%d\n",
-			__func__, gpio_get_value(g_pmic_en_gpio_mt6989), faultb_level);
-		if (faultb_level == 1)
-			return;
-	}
+	/* check FaultB level to avoid noise trigger */
+	faultb_level = gpio_get_value(g_faultb_gpio_mt6989);
+	pr_info("[%s] PMIC_EN=%d, faultb=%d\n",
+		__func__, gpio_get_value(g_pmic_en_gpio_mt6989), faultb_level);
+	if (faultb_level == 1)
+		return;
 
 	if (g_dev_cb != NULL && g_dev_cb->connv3_pmic_event_notifier != NULL)
 		g_dev_cb->connv3_pmic_event_notifier(0, 1);
@@ -189,13 +187,6 @@ int connv3_plt_pmic_initial_setting_mt6989(struct platform_device *pdev, struct 
 		pr_err("[%s] fail to get \"connsys-pin-pmic-faultb-default\"",  __func__);
 		return -1;
 	}
-
-	ret = of_property_read_u32(pdev->dev.of_node, "faultb-immediately", &g_faultb_immediately_mt6989);
-	if(ret)
-		pr_info("[%s][%d], there is no faultb-immediately node, ret=%d, g_faultb_immediately_mt6989=%d\n",
-			__func__, __LINE__, ret, g_faultb_immediately_mt6989);
-	else
-		pr_info("[%s][%d], faultb-immediately=%d\n", __func__, __LINE__, g_faultb_immediately_mt6989);
 
 	irq_num = irq_of_parse_and_map(pdev->dev.of_node, 0);
 	pr_info("[%s][%d], irqNum of CONNSYS = %d", __func__, __LINE__, irq_num);
