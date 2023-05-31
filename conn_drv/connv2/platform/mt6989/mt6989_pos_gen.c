@@ -836,6 +836,12 @@ int connsys_low_power_setting_mt6989_gen(void)
 			CONSYS_GEN_BGFYS_ON_TOP_PWR_CTL_OFFSET_ADDR, 0x42540000, 0xFFFF0040);
 	#endif
 
+	/* conn_vrf18_req switch as conn_apsrc_req */
+	#ifndef CONFIG_FPGA_EARLY_PORTING
+		CONSYS_SET_BIT(CONN_CFG_BASE +
+			CONSYS_GEN_EMI_CTL_0_OFFSET_ADDR, (0x1U << 30));
+	#endif
+
 	/* conn2ap sleep protect release bypass ddr_en_ack check */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		CONSYS_SET_BIT(CONN_CFG_BASE +
