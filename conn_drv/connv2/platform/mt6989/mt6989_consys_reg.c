@@ -255,6 +255,9 @@ int consys_is_bus_hang_mt6989(void)
 		return ret;
 	}
 
+	consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
+		CONNINFRA_BUS_LOG_LEVEL_CONNINFRA_ON, g_debug_info_ptr);
+		consys_print_log("[slpprot_a]", g_debug_info_ptr);
 	consys_print_power_debug_dbg_level_1_mt6989_debug_gen(
 		CONNINFRA_BUS_LOG_LEVEL_CONNINFRA_ON, g_debug_info_ptr);
 	consys_print_log("[CONN_POWER_B]", g_debug_info_ptr);
@@ -282,6 +285,10 @@ int consys_is_bus_hang_mt6989(void)
 		consys_print_bus_slpprot_debug_dbg_level_2_mt6989_debug_gen(
 			CONNINFRA_BUS_LOG_LEVEL_CONNINFRA_OFF, g_debug_info_ptr);
 		consys_print_log("[slpprot_c]", g_debug_info_ptr);
+
+		consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
+			CONNINFRA_BUS_LOG_LEVEL_CONNINFRA_OFF, g_debug_info_ptr);
+		consys_print_log("[slpprot_a]", g_debug_info_ptr);
 	}
 
 	return ret;

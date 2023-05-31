@@ -11,8 +11,8 @@
  * It should not be modified by hand.
  *
  * Reference debug file,
- * - [Lxxxy]connsys_power_debug.xlsx (Modified date: 2023-03-15)
- * - [Lxxxy]conn_infra_bus_debug_ctrl.xlsx (Modified date: 2023-03-20)
+ * - [Lxxxy]connsys_power_debug.xlsx (Modified date: 2023-04-28)
+ * - [Lxxxy]conn_infra_bus_debug_ctrl.xlsx (Modified date: 2023-05-19)
  */
 
 
@@ -21,8 +21,8 @@
 
 #define CONN_DEBUG_INFO_SIZE 256
 #define DEBUG_TAG_SIZE 10
+#define MT6989_CONN_INFRA_BUS_DUMP_VERSION     "ver4_0_20230519"
 
-#define MT6989_CONN_INFRA_BUS_DUMP_VERSION	"ver4_0_20230320"
 struct conn_debug_info_mt6989 {
 	char tag[CONN_DEBUG_INFO_SIZE][DEBUG_TAG_SIZE];
 	unsigned int wr_addr[CONN_DEBUG_INFO_SIZE];
@@ -231,6 +231,7 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
 #define CONSYS_DBG_GEN_CONN_INFRA_AXI_LAYER_BUS_BCRM_BASE_ADDR                                    0x1804c000
 #define CONSYS_DGEN_INFRA_AXI_LAYER_BUS_BCRM_1804c004_OFFSET                                      0x4
 #define CONSYS_DGEN_INFRA_AXI_LAYER_BUS_BCRM_1804c00c_OFFSET                                      0xc
+#define CONSYS_DBG_GEN_CONN_INFRA_VDNR_GEN_AXILAYER_U_S1_CTRL_0_OFFSET_ADDR                       0x10
 
 /**********************************************************************************************************/
 /* Base: CONN_OFF_DEBUG_CTRL_AO_BASE (0x1804_d000)                                                        */
