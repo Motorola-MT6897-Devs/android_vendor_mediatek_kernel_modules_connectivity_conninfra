@@ -44,11 +44,6 @@ struct consys_hw_ops_struct g_consys_hw_ops_mt6989 = {
 	.consys_plt_adie_detection = consys_get_adie_chipid_mt6989,
 };
 
-extern struct consys_hw_ops_struct g_consys_hw_ops_mt6989;
-extern struct consys_platform_emi_ops g_consys_platform_emi_ops_mt6989;
-extern struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6989;
-extern struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6989;
-
 struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989 = {
 	.consys_reg_mng_init = consys_reg_init_mt6989,
 	.consys_reg_mng_deinit = consys_reg_deinit_mt6989,
@@ -60,6 +55,12 @@ struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989 = {
 	.consys_reg_mng_debug_deinit = consys_debug_deinit_mt6989,
 };
 
+extern struct consys_hw_ops_struct g_consys_hw_ops_mt6989;
+extern struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989;
+extern struct consys_platform_emi_ops g_consys_platform_emi_ops_mt6989;
+extern struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6989;
+extern struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6989;
+
 const struct conninfra_plat_data mt6989_plat_data = {
 	.chip_id = PLATFORM_SOC_CHIP_MT6989,
 	.consys_hw_version = CONN_HW_VER_MT6989,
@@ -70,10 +71,6 @@ const struct conninfra_plat_data mt6989_plat_data = {
 	.platform_coredump_ops = &g_consys_platform_coredump_ops_mt6989,
 	.connsyslog_config = &g_connsyslog_config_mt6989,
 };
-
-/* ATF data
- */
-extern struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6989_atf;
 
 struct consys_hw_ops_struct g_consys_hw_ops_mt6989_atf = {
 	.consys_plt_init_atf_data = consys_init_atf_data_mt6989_atf,
@@ -116,8 +113,14 @@ struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989_atf = {
 		= consys_check_ap2conn_infra_on_mt6989,
 	.consys_reg_mng_check_readable_conninfra_off_status
 		= consys_check_conninfra_off_domain_status_mt6989_atf,
+	.consys_reg_mng_check_readable_conninfra_irq
+		= consys_check_conninfra_irq_status_mt6989_atf,
 	.consys_reg_mng_check_readable_conninfra_log = consys_print_debug_mt6989_atf,
 };
+
+extern struct consys_hw_ops_struct g_consys_hw_ops_mt6989_atf;
+extern struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989_atf;
+extern struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6989_atf;
 
 const struct conninfra_plat_data mt6989_plat_data_atf = {
 	.chip_id = PLATFORM_SOC_CHIP_MT6989,

@@ -25,6 +25,8 @@ struct consys_platform_coredump_ops g_consys_platform_coredump_ops_mt6989_atf = 
 	.consys_coredump_remap = consys_plt_coredump_remap_mt6989,
 	.consys_coredump_unmap = consys_plt_coredump_unmap_mt6989,
 	.consys_coredump_get_tag_name = consys_plt_coredump_get_tag_name_mt6989,
+	.consys_coredump_is_supported = consys_plt_coredump_is_supported_mt6989,
+	.consys_coredump_get_emi_dump_offset = consys_plt_coredump_get_emi_dump_offset_mt6989,
 };
 
 int consys_plt_coredump_setup_dump_region_mt6989_atf(int conn_type)
