@@ -18,6 +18,8 @@ static int g_conn_infra_bus_timeout_irq = 0;
 static bool g_conn_infra_bus_timeout_irq_register = false;
 static struct work_struct g_conninfra_irq_rst_work;
 
+static atomic_t g_conn_infra_bus_timeout_irq_flag;
+
 int consys_co_clock_type_mt6989(void)
 {
 	const struct conninfra_conf *conf;
@@ -111,16 +113,19 @@ static void conninfra_irq_rst_handler(struct work_struct *work)
 	conninfra_is_bus_hang();
 	conninfra_trigger_whole_chip_rst(CONNDRV_TYPE_CONNINFRA,
 									"conninfra bus timeout irq handling");
+	/* clear irq */
+	CONSYS_SET_BIT(CONN_BUS_CR_BASE +
+		CONN_BUS_CR_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_ADDR_OFFSET, (0x1U << 1));
+	atomic_set(&g_conn_infra_bus_timeout_irq_flag, 0);
 }
 
 irqreturn_t consys_irq_handler_mt6989(int irq, void* data)
 {
-	pr_info("[%s] receive irq id=[%d]\n", __func__, irq);
-
-	/* clear irq and trigger whole chip reset */
-	CONSYS_SET_BIT(CONN_BUS_CR_BASE +
-		CONN_BUS_CR_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_ADDR_OFFSET, (0x1U << 1));
-	schedule_work(&g_conninfra_irq_rst_work);
+	if (atomic_read(&g_conn_infra_bus_timeout_irq_flag) == 0) {
+		pr_info("[%s] receive irq id=[%d]\n", __func__, irq);
+		atomic_set(&g_conn_infra_bus_timeout_irq_flag, 1);
+		schedule_work(&g_conninfra_irq_rst_work);
+	}
 
 	return IRQ_HANDLED;
 }
@@ -151,6 +156,8 @@ int consys_register_irq_mt6989(struct platform_device *pdev)
 			pr_info("[%s] register irq num=[%d] done\n", __func__,
 				g_conn_infra_bus_timeout_irq);
 		}
+
+		atomic_set(&g_conn_infra_bus_timeout_irq_flag, 0);
 	}
 
 	return 0;
