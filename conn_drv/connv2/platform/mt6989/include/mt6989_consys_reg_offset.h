@@ -17,6 +17,7 @@
  * Size:
  *********************************************************************/
 #include "conn_bus_cr_mt6989.h"
+#define CONN_BUS_CR_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_ADDR_OFFSET 0x24
 
 /**********************************************************************
  * conn_bus_cr_on

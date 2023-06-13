@@ -42,6 +42,8 @@ struct consys_hw_ops_struct g_consys_hw_ops_mt6989 = {
 	.consys_plt_reset_power_state = consys_reset_power_state_mt6989,
 	.consys_plt_power_state = consys_power_state_dump_mt6989,
 	.consys_plt_adie_detection = consys_get_adie_chipid_mt6989,
+	.consys_plt_register_irq = consys_register_irq_mt6989,
+	.consys_plt_unregister_irq = consys_unregister_irq_mt6989,
 };
 
 struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989 = {
@@ -101,6 +103,8 @@ struct consys_hw_ops_struct g_consys_hw_ops_mt6989_atf = {
 	.consys_plt_power_state = consys_power_state_dump_mt6989_atf,
 	.consys_plt_adie_detection = consys_get_adie_chipid_mt6989,
 	.consys_plt_set_mcu_control = consys_set_mcu_control_mt6989_atf,
+	.consys_plt_register_irq = consys_register_irq_mt6989,
+	.consys_plt_unregister_irq = consys_unregister_irq_mt6989,
 };
 
 struct consys_reg_mng_ops g_dev_consys_reg_ops_mt6989_atf = {
