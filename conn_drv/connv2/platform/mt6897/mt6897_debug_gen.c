@@ -923,7 +923,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR, 0x10001);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"1", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR,
-		0, 31, 0x65537);
+		0, 31, 0x10001);
 
 	/* 1 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -936,7 +936,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR, 0x20001);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"2", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR,
-		0, 31, 0x131073);
+		0, 31, 0x20001);
 
 	/* 2 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -949,7 +949,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR, 0x10002);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"3", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR,
-		0, 31, 0x65538);
+		0, 31, 0x10002);
 
 	/* 3 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -962,7 +962,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR, 0x20002);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"4", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR,
-		0, 31, 0x131074);
+		0, 31, 0x20002);
 
 	/* 4 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -975,7 +975,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR, 0x30002);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"5", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_DEBUGSYS_CTRL_OFFSET_ADDR,
-		0, 31, 0x196610);
+		0, 31, 0x30002);
 
 	/* 5 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1105,7 +1105,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xA);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"15", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x10);
+		0, 31, 0xA);
 
 	/* 15 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1118,7 +1118,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xB);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"16", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x11);
+		0, 31, 0xB);
 
 	/* 16 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1131,7 +1131,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xC);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"17", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x12);
+		0, 31, 0xC);
 
 	/* 17 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1144,7 +1144,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xD);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"18", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x13);
+		0, 31, 0xD);
 
 	/* 18 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1157,7 +1157,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xE);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"19", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x14);
+		0, 31, 0xE);
 
 	/* 19 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1170,7 +1170,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0xF);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"20", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x15);
+		0, 31, 0xF);
 
 	/* 20 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1183,7 +1183,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x10);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"21", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x16);
+		0, 31, 0x10);
 
 	/* 21 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1196,7 +1196,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x11);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"22", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x17);
+		0, 31, 0x11);
 
 	/* 22 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1209,7 +1209,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x12);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"23", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x18);
+		0, 31, 0x12);
 
 	/* 23 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1222,7 +1222,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x13);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"24", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x19);
+		0, 31, 0x13);
 
 	/* 24 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1235,7 +1235,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x14);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"25", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x20);
+		0, 31, 0x14);
 
 	/* 25 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1248,7 +1248,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x15);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"26", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x21);
+		0, 31, 0x15);
 
 	/* 26 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1261,7 +1261,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x16);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"27", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x22);
+		0, 31, 0x16);
 
 	/* 27 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1274,7 +1274,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x17);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"28", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x23);
+		0, 31, 0x17);
 
 	/* 28 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
@@ -1287,7 +1287,7 @@ void consys_print_bus_debug_dbg_level_1_mt6897_debug_gen(
 		CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR, 0x18);
 	update_debug_write_info_mt6897_debug_gen(pdbg_level_1_info,
 		"29", 0x18023000 + CONSYS_DBG_GEN_CONN_INFRA_OFF_BUS_DBG_SEL_OFFSET_ADDR,
-		0, 31, 0x24);
+		0, 31, 0x18);
 
 	/* 29 */
 	update_debug_read_info_mt6897_debug_gen(pdbg_level_1_info,
