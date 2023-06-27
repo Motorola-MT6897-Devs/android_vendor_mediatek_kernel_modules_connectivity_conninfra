@@ -55,6 +55,34 @@ int consys_clk_get_from_dts_mt6989(struct platform_device *pdev)
 
 int consys_clock_buffer_ctrl_mt6989(unsigned int enable)
 {
+	mapped_addr vir_addr_consys_dbg_gen_topckgen_base_mt6989;
+	vir_addr_consys_dbg_gen_topckgen_base_mt6989
+		= ioremap(CONSYS_DBG_GEN_TOPCKGEN_BASE_ADDR, 0x100);
+
+	if (!vir_addr_consys_dbg_gen_topckgen_base_mt6989) {
+		pr_notice("topckgen_base_mt6989 is not defined\n");
+		return -1;
+	}
+
+	if (enable) {
+		/* Turn on f_fap2conn_host_ck
+		 * write 0x1000_0048[15] = 1
+		 */
+		pr_info("[%s] Turn on f_fap2conn_host_ck\n", __func__);
+		CONSYS_SET_BIT(vir_addr_consys_dbg_gen_topckgen_base_mt6989 +
+			0x48, (0x1U << 15));
+	} else {
+		/* Turn off f_fap2conn_host_ck
+		 * write 0x1000_0044[15] = 1
+		 */
+		pr_info("[%s] Turn off f_fap2conn_host_ck\n", __func__);
+		CONSYS_SET_BIT(vir_addr_consys_dbg_gen_topckgen_base_mt6989 +
+			0x44, (0x1U << 15));
+	}
+
+	if (vir_addr_consys_dbg_gen_topckgen_base_mt6989)
+		iounmap(vir_addr_consys_dbg_gen_topckgen_base_mt6989);
+
 	return 0;
 }
 

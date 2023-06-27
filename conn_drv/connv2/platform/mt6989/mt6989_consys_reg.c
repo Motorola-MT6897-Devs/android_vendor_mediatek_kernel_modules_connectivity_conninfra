@@ -20,11 +20,13 @@
 #include "include/mt6989_pos.h"
 #include "include/mt6989_pos_gen.h"
 
-struct consys_base_addr g_conn_reg_mt6989;
-
 #define CONSYS_DUMP_BUF_SIZE 800
+
+struct consys_base_addr g_conn_reg_mt6989;
 static struct conn_debug_info_mt6989 static_debug_info;
 static struct conn_debug_info_mt6989 *g_debug_info_ptr;
+static struct conn_debug_info_mt6989 static_debug_top_power_info;
+static struct conn_debug_info_mt6989 *g_debug_top_power_info_ptr;
 static char static_debug_buf[CONSYS_DUMP_BUF_SIZE];
 static char *g_debug_buf_ptr;
 
@@ -48,7 +50,8 @@ static const char* consys_base_addr_index_to_str[CONSYS_BASE_ADDR_MAX] = {
 	"SRCLKENRC",
 };
 
-static void consys_print_log(const char *title, struct conn_debug_info_mt6989 *info)
+static void consys_print_log(const char *title,
+		struct conn_debug_info_mt6989 *info)
 {
 	char temp[13];
 	int i;
@@ -69,7 +72,8 @@ static void consys_print_log(const char *title, struct conn_debug_info_mt6989 *i
 		}
 
 		if (strlen(g_debug_buf_ptr) + strlen(temp) < CONSYS_DUMP_BUF_SIZE)
-			strnlcat(g_debug_buf_ptr, temp, strlen(temp) + 1, CONSYS_DUMP_BUF_SIZE);
+			strnlcat(g_debug_buf_ptr, temp, strlen(temp) + 1,
+					CONSYS_DUMP_BUF_SIZE);
 		else
 			pr_notice("[%s] debug_buf len is not enough\n", __func__);
 	}
@@ -140,8 +144,10 @@ int consys_check_ap2conn_infra_on_mt6989(void)
 	 * 0x1002_C1CC[0] / 0x1002_C00C[25](rx/tx) (sleep protect enable ready)
 	 * both of them should be 1'b0
 	 */
-	rx = CONSYS_REG_READ(INFRABUS_AO_REG_BASE_ADDR + 0x1cc); // connsys_protect_rdy
-	tx = CONSYS_REG_READ(INFRABUS_AO_REG_BASE_ADDR + 0xc); // infrasys_protect_rdy
+	/* connsys_protect_rdy */
+	rx = CONSYS_REG_READ(INFRABUS_AO_REG_BASE_ADDR + 0x1cc);
+	/* infrasys_protect_rdy */
+	tx = CONSYS_REG_READ(INFRABUS_AO_REG_BASE_ADDR + 0xc);
 
 	if (rx & (0x1 << 0))
 		return CONNINFRA_AP2CONN_RX_SLP_PROT_ERR;
@@ -156,10 +162,11 @@ static int __consys_reg_clock_detect(void)
 	unsigned int r = 0;
 	unsigned int count = 0;
 
-	/* Check conn_infra off bus clock */
-	/* - write 0x1 to 0x1802_3000[0], reset clock detect */
-	/* - 0x1802_3000[1]  conn_infra off bus clock (should be 1'b1 if clock exist) */
-	/* - 0x1802_3000[2]  osc clock (should be 1'b1 if clock exist) */
+	/* Check conn_infra off bus clock
+	 * write 0x1 to 0x1802_3000[0], reset clock detect
+	 * 0x1802_3000[1] conn_infra off bus clock (should be 1'b1 if clock exist)
+	 * 0x1802_3000[2] osc clock (should be 1'b1 if clock exist)
+	 */
 	while (count < 4) {
 		CONSYS_SET_BIT(CONN_DBG_CTL_CLOCK_DETECT_ADDR, (0x1 << 0));
 		udelay(20);
@@ -182,12 +189,13 @@ int consys_check_ap2conn_infra_off_clock_mt6989(void)
 
 	/* 1.Check "AP2CONN_INFRA ON step is ok"
 	 * 2. Check conn_infra off bus clock
-	 *    (Need to polling 4 times to confirm the correctness and polling every 1ms)
-	 * - write 0x1 to 0x1802_3000[0], reset clock detect
-	 * - 0x1802_3000[1] conn_infra off bus clock (should be 1'b1 if clock exist)
-	 * - 0x1802_3000[2] osc clock (should be 1'b1 if clock exist)
+	 * (Need to polling 4 times to confirm
+	 * the correctness and polling every 1ms)
+	 * write 0x1 to 0x1802_3000[0], reset clock detect
+	 * 0x1802_3000[1] conn_infra off bus clock (should be 1'b1 if clock exist)
+	 * 0x1802_3000[2] osc clock (should be 1'b1 if clock exist)
 	 * 3. Read conn_infra IP version
-	 * - Read 0x1801_1000 = 0x02050500
+	 * Read 0x1801_1000 = 0x02050500
 	 */
 	if (!__consys_reg_clock_detect())
 		return CONNINFRA_AP2CONN_CLK_ERR;
@@ -199,7 +207,8 @@ int consys_check_ap2conn_infra_off_clock_mt6989(void)
 int consys_check_ap2conn_infra_off_irq_mt6989(void)
 {
 	/* 4. Check conn_infra off domain bus hang irq status
-	 * - 0x1802_3400[2:0], should be 3'b000, or means conn_infra off bus might hang
+	 * 0x1802_3400[2:0]
+	 * should be 3'b000, or means conn_infra off bus might hang
 	 */
 	int ret = -1;
 
@@ -294,6 +303,30 @@ int consys_is_bus_hang_mt6989(void)
 	return ret;
 }
 
+int consys_debug_top_power_status_mt6989(void)
+{
+	int ret = 0;
+
+	if (g_debug_top_power_info_ptr == NULL) {
+		pr_notice("[%s] debug_top_power_info is NULL\n", __func__);
+		return -1;
+	}
+
+	consys_print_top_power_debug_dbg_level_0_mt6989_debug_gen(
+			g_debug_top_power_info_ptr);
+	consys_print_log("[CONN_SUBSYS_POWER]", g_debug_top_power_info_ptr);
+
+	consys_print_top_power_debug_dbg_level_1_mt6989_debug_gen(
+			g_debug_top_power_info_ptr);
+	consys_print_log("[CONN_TOP_POWER_A]", g_debug_top_power_info_ptr);
+
+	consys_print_top_power_debug_dbg_level_2_mt6989_debug_gen(
+			g_debug_top_power_info_ptr);
+	consys_print_log("[CONN_TOP_POWER_B]", g_debug_top_power_info_ptr);
+
+	return ret;
+}
+
 void consys_debug_init_mt6989(void)
 {
 	g_debug_info_ptr = &static_debug_info;
@@ -308,6 +341,12 @@ void consys_debug_init_mt6989(void)
 		return;
 	}
 
+	g_debug_top_power_info_ptr = &static_debug_top_power_info;
+	if (g_debug_top_power_info_ptr == NULL) {
+		pr_notice("[%s] debug_top_power_info malloc failed\n", __func__);
+		return;
+	}
+
 	consys_debug_init_mt6989_debug_gen();
 }
 
@@ -318,6 +357,9 @@ void consys_debug_deinit_mt6989(void)
 
 	if (g_debug_buf_ptr != NULL)
 		g_debug_buf_ptr = NULL;
+
+	if (g_debug_top_power_info_ptr != NULL)
+		g_debug_top_power_info_ptr = NULL;
 
 	consys_debug_deinit_mt6989_debug_gen();
 }

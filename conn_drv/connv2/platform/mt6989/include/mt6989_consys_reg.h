@@ -66,6 +66,7 @@ int consys_check_ap2conn_infra_on_mt6989(void);
 int consys_check_ap2conn_infra_off_clock_mt6989(void);
 int consys_check_ap2conn_infra_off_irq_mt6989(void);
 int consys_print_debug_mt6989(enum conninfra_bus_error_type level);
+int consys_debug_top_power_status_mt6989(void);
 
 void consys_debug_init_mt6989_atf(void);
 void consys_debug_deinit_mt6989_atf(void);
