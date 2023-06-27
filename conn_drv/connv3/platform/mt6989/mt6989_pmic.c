@@ -66,12 +66,16 @@ int connv3_plt_pmic_initial_setting_mt6989(struct platform_device *pdev, struct 
 int connv3_plt_pmic_common_power_ctrl_mt6989(u32 enable);
 int connv3_plt_pmic_vsel_ctrl_mt6989(u32 enable);
 int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz);
+int connv3_plt_pmic_get_connsys_chip_info_mt6989(char *connsys_ecid, int connsys_ecid_size);
+int connv3_plt_pmic_get_pmic_chip_info_mt6989(char *pmic_ecid, int pmic_ecid_size);
 
 const struct connv3_platform_pmic_ops g_connv3_platform_pmic_ops_mt6989 = {
 	.pmic_initial_setting = connv3_plt_pmic_initial_setting_mt6989,
 	.pmic_common_power_ctrl = connv3_plt_pmic_common_power_ctrl_mt6989,
 	.pmic_vsel_ctrl = connv3_plt_pmic_vsel_ctrl_mt6989,
 	.pmic_parse_state = connv3_plt_pmic_parse_state_mt6989,
+	.pmic_get_connsys_chip_info = connv3_plt_pmic_get_connsys_chip_info_mt6989,
+	.pmic_get_pmic_chip_info = connv3_plt_pmic_get_pmic_chip_info_mt6989,
 };
 
 struct work_struct g_pmic_faultb_work_mt6989;
@@ -419,6 +423,12 @@ int connv3_plt_pmic_vsel_ctrl_mt6989(u32 enable)
 
 #define PMIC_STAT_SIZE  21
 
+#define CHIP_ECIP_INFO_LENGTH  128
+char connsys_chip_ecid[CHIP_ECIP_INFO_LENGTH];
+bool connsys_chip_ecid_ready = false;
+char connsys_pmic_ecid[CHIP_ECIP_INFO_LENGTH];
+bool connsys_pmic_ecid_ready = false;
+
 int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 {
 #define TMP_LOG_SIZE 128
@@ -435,6 +445,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 	char log_buf[TMP_LOG_SIZE];
 	int remain_size = TMP_LOG_SIZE - 1;
 	static int g_first_dump = 1;
+	int ret;
 
 	if (!buffer){
 		pr_err("[%s] PMIC dump register is NULL\n", __func__);
@@ -470,6 +481,22 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 	}
 	if (strlen(log_buf) > 0)
 		pr_info("[MT6376-State] %s", log_buf);
+
+	if (connsys_pmic_ecid_ready == false) {
+		ret = snprintf(connsys_pmic_ecid, CHIP_ECIP_INFO_LENGTH, "[MT6376P_ECID][%02X, %02X]", buffer[26], buffer[27]);
+		if (ret <= 0)
+			pr_notice("%s snprintf fail", __func__);
+		else
+			connsys_pmic_ecid_ready = true;
+	}
+	if (connsys_chip_ecid_ready == false) {
+		ret = snprintf(connsys_chip_ecid, CHIP_ECIP_INFO_LENGTH, "[MT6639A_ECID][%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X]",
+			buffer[28], buffer[29], buffer[30], buffer[31], buffer[32],buffer[33], buffer[34], buffer[35]);
+		if (ret <= 0)
+			pr_notice("%s snprintf fail", __func__);
+		else
+			connsys_chip_ecid_ready = true;
+	}
 
 	register_dump = buffer + 4;
 
@@ -525,7 +552,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 			uds_status, (i2c_last_dev == 0x0)?"PMIC":"BUCK", i2c_last_addr, i2c_last_wdata);
 
 		log_buf[0] = '\0';
-		log_len += snprintf(log_buf + log_len, TMP_LOG_SIZE - log_len, "[MT6376] EXCEPTION: ");
+		log_len = snprintf(log_buf + log_len, TMP_LOG_SIZE - log_len, "[MT6376] EXCEPTION: ");
 		if (pmic_stat) {
 			if (pmic_stat & PMIC_OTP_EVT)
 				log_len += snprintf(log_buf + log_len, TMP_LOG_SIZE - log_len, "OT ");
@@ -557,3 +584,24 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 
 	return 0;
 }
+
+int connv3_plt_pmic_get_connsys_chip_info_mt6989(char *connsys_ecid, int connsys_ecid_size)
+{
+	int ret = 0;
+
+	if (connsys_chip_ecid_ready == true)
+		strncpy(connsys_ecid, connsys_chip_ecid, connsys_ecid_size);
+
+	return ret;
+}
+
+int connv3_plt_pmic_get_pmic_chip_info_mt6989(char *pmic_ecid, int pmic_ecid_size)
+{
+	int ret = 0;
+
+	if (connsys_pmic_ecid_ready == true)
+		strncpy(pmic_ecid, connsys_pmic_ecid, pmic_ecid_size);
+
+	return ret;
+}
+
