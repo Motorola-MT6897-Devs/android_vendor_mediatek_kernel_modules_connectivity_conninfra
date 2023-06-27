@@ -17,7 +17,6 @@
  * Size:
  *********************************************************************/
 #include "conn_bus_cr_mt6989.h"
-#define CONN_BUS_CR_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_ADDR_OFFSET 0x24
 
 /**********************************************************************
  * conn_bus_cr_on
@@ -136,5 +135,7 @@
  *********************************************************************/
 #define REG_SRCLKENRC_BASE        (VLPSYS_SRCLKENRC_MT6989)
 #define SRCLKENRC_RC_CENTRAL_CFG1 (REG_SRCLKENRC_BASE + 0x0004) /* To check if RC mode support */
+
+#define CONSYS_DBG_GEN_TOPCKGEN_BASE_ADDR       0x10000000
 
 #endif /* _PLATFORM_MT6989_CONSYS_REG_OFFSET_H_ */

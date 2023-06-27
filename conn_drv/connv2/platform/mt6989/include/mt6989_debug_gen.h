@@ -70,6 +70,15 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
 		int level,
 		struct conn_debug_info_mt6989 *pdbg_level_0_info);
 
+void consys_print_top_power_debug_dbg_level_0_mt6989_debug_gen(
+		struct conn_debug_info_mt6989 *pdbg_level_0_info);
+
+void consys_print_top_power_debug_dbg_level_1_mt6989_debug_gen(
+		struct conn_debug_info_mt6989 *pdbg_level_1_info);
+
+void consys_print_top_power_debug_dbg_level_2_mt6989_debug_gen(
+		struct conn_debug_info_mt6989 *pdbg_level_2_info);
+
 /**********************************************************************************************************/
 /* Base: SPM_BASE_ADDR (0x1C00_1000)                                                                      */
 /**********************************************************************************************************/
@@ -143,9 +152,14 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
 /**********************************************************************************************************/
 /* Base: CONN_HOST_CSR_TOP_BASE (0x1806_0000)                                                             */
 /**********************************************************************************************************/
-#define CONSYS_DBG_GEN_CR_CONN_INFRA_CFG_ON_DBG_MUX_SEL_OFFSET_ADDR                               0x15C
-#define CONSYS_DBG_GEN_CONN_INFRA_CFG_ON_DBG_OFFSET_ADDR                                          0xa04
-#define CONSYS_DBG_GEN_CONNSYS_PWR_STATES_OFFSET_ADDR                                             0xA10
+#define CONSYS_DBG_GEN_CR_CONN_INFRA_CFG_ON_DBG_MUX_SEL_OFFSET_ADDR        0x15c
+#define CONSYS_DBG_GEN_CR_CONN_INFRA_RGU_ON_DBG_MUX_SEL_OFFSET_ADDR        0x160
+#define CONSYS_DBG_GEN_CONN_INFRA_WAKEPU_TOP_ADDR                          0x1a0
+#define CONSYS_DBG_GEN_CONN_INFRA_CFG_ON_DBG_OFFSET_ADDR                   0xa04
+#define CONSYS_DBG_GEN_CONN_INFRA_RGU_ON_DBG_ADDR                          0xa08
+#define CONSYS_DBG_GEN_CONN_INFRA_SYSSTRAP_OUT_ADDR                        0xa00
+#define CONSYS_DBG_GEN_CONN_INFRA_CLKGEN_ON_DBG_ADDR                       0xa0c
+#define CONSYS_DBG_GEN_CONNSYS_PWR_STATES_OFFSET_ADDR                      0xa10
 
 /**********************************************************************************************************/
 /* Base: CONSYS_DBG_GEN_CONN_DBG_CTL_BASE_ADDR (0x1802_3000)                                              */
@@ -164,9 +178,10 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6989_debug_gen(
 /**********************************************************************************************************/
 /* Base: CONN_CFG_BASE (0x1801_1000)                                                                      */
 /**********************************************************************************************************/
-#define CONSYS_DBG_GEN_PLL_STATUS_OFFSET_ADDR                                                     0x30
-#define CONSYS_DBG_GEN_EMI_CTL_0_OFFSET_ADDR                                                      0x100
-#define CONSYS_DBG_GEN_EMI_PROBE_1_OFFSET_ADDR                                                    0x134
+#define CONSYS_DBG_GEN_PLL_STATUS_OFFSET_ADDR                              0x30
+#define CONSYS_DBG_GEN_EMI_CTL_0_OFFSET_ADDR                               0x100
+#define CONSYS_DBG_GEN_EMI_PROBE_ADDR                                      0x130
+#define CONSYS_DBG_GEN_EMI_PROBE_1_OFFSET_ADDR                             0x134
 
 /**********************************************************************************************************/
 /* Base: CONN_CLKGEN_TOP_BASE (0x1801_2000)                                                               */

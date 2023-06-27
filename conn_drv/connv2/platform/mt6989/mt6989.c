@@ -124,6 +124,8 @@ static void consys_power_state(void)
 		}
 	}
 	pr_info("[%s] [0x%x] %s", __func__, r, buf);
+
+	consys_debug_top_power_status_mt6989();
 }
 
 #define POWER_STATE_BUF_SIZE 256
