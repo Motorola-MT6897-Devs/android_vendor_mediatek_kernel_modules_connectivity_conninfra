@@ -146,10 +146,14 @@ int consys_reset_power_state_mt6989_atf(void)
 #define POWER_STATE_DUMP_DATA_SIZE	25
 int consys_power_state_dump_mt6989_atf(char *buf, unsigned int size)
 {
+#define POWER_STATE_BUF_SIZE 256
 	int	i, op_id;
 	struct arm_smccc_res res;
 	unsigned long power_state_dump_data[POWER_STATE_DUMP_DATA_SIZE];
-	int ret;
+	char temp_buf[POWER_STATE_BUF_SIZE];
+	char *buf_p = temp_buf;
+	int buf_sz = POWER_STATE_BUF_SIZE;
+	int ret = 0;
 
 	for (op_id = SMC_CONNSYS_POWER_STATE_DUMP_START_OPID, i = 0;
 	     op_id < SMC_CONNSYS_POWER_STATE_DUMP_END_OPID;
@@ -177,10 +181,12 @@ int consys_power_state_dump_mt6989_atf(char *buf, unsigned int size)
 		power_state_dump_data[0 + 3 * i] = res.a1;
 	}
 
-	if (buf == NULL || size <= 0)
-		return ret;
+	if (buf != NULL && size > 0) {
+		buf_p = buf;
+		buf_sz = size;
+	}
 
-	if(snprintf(buf, size,"[consys_power_state][round:%lu]"
+	if(snprintf(buf_p, buf_sz,"[consys_power_state][round:%lu]"
 		"conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;"
 		"[total]conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;",
 		power_state_dump_data[0],
@@ -196,7 +202,7 @@ int consys_power_state_dump_mt6989_atf(char *buf, unsigned int size)
 		power_state_dump_data[22],
 		power_state_dump_data[23],
 		power_state_dump_data[24]) > 0)
-		pr_info("%s", buf);
+		pr_info("%s\n", buf_p);
 	return ret;
 }
 

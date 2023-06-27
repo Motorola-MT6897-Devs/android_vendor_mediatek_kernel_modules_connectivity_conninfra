@@ -123,22 +123,22 @@ static void consys_power_state(void)
 			buf_len += str_len;
 		}
 	}
-	pr_info("[%s] [0x%x] %s", __func__, r, buf);
+	pr_info("[%s] [0x%x] %s\n", __func__, r, buf);
 
 	consys_debug_top_power_status_mt6989();
 }
 
-#define POWER_STATE_BUF_SIZE 256
-static char temp_buf[POWER_STATE_BUF_SIZE];
 static int consys_power_state_dump(char *buf, unsigned int size, int print_log)
 {
 #define CONN_32K_TICKS_PER_SEC (32768)
 #define CONN_TICK_TO_SEC(TICK) (TICK / CONN_32K_TICKS_PER_SEC)
+#define POWER_STATE_BUF_SIZE 256
 	static u64 round;
 	static u64 t_conninfra_sleep_cnt, t_conninfra_sleep_time;
 	static u64 t_gps_sleep_cnt, t_gps_sleep_time;
 	unsigned int conninfra_sleep_cnt, conninfra_sleep_time;
 	unsigned int gps_sleep_cnt, gps_sleep_time;
+	char temp_buf[POWER_STATE_BUF_SIZE];
 	char *buf_p = temp_buf;
 	int buf_sz = POWER_STATE_BUF_SIZE;
 	int ret = 0;
@@ -203,25 +203,25 @@ static int consys_power_state_dump(char *buf, unsigned int size, int print_log)
 		if (buf != NULL && size > 0) {
 			buf_p = buf;
 			buf_sz = size;
-
-			ret = snprintf(buf_p, buf_sz,
-				"[consys_power_state][round:%lu]conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;[total]conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;",
-				mt6989_power_state_dump_data[0],
-				mt6989_power_state_dump_data[1],
-				mt6989_power_state_dump_data[2],
-				mt6989_power_state_dump_data[3],
-				mt6989_power_state_dump_data[10],
-				mt6989_power_state_dump_data[11],
-				mt6989_power_state_dump_data[12],
-				mt6989_power_state_dump_data[13],
-				mt6989_power_state_dump_data[14],
-				mt6989_power_state_dump_data[15],
-				mt6989_power_state_dump_data[22],
-				mt6989_power_state_dump_data[23],
-				mt6989_power_state_dump_data[24]);
-			if (ret)
-				pr_info("%s", buf_p);
 		}
+
+		ret = snprintf(buf_p, buf_sz,
+			"[consys_power_state][round:%lu]conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;[total]conninfra:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;",
+			mt6989_power_state_dump_data[0],
+			mt6989_power_state_dump_data[1],
+			mt6989_power_state_dump_data[2],
+			mt6989_power_state_dump_data[3],
+			mt6989_power_state_dump_data[10],
+			mt6989_power_state_dump_data[11],
+			mt6989_power_state_dump_data[12],
+			mt6989_power_state_dump_data[13],
+			mt6989_power_state_dump_data[14],
+			mt6989_power_state_dump_data[15],
+			mt6989_power_state_dump_data[22],
+			mt6989_power_state_dump_data[23],
+			mt6989_power_state_dump_data[24]);
+		if (ret > 0)
+			pr_info("%s\n", buf_p);
 
 		/* Power state */
 		consys_power_state();
