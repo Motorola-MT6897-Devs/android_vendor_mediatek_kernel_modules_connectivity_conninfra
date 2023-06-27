@@ -308,37 +308,37 @@ static int consys_power_state_dump(char *buf, unsigned int size, int print_log)
 		if (buf != NULL && size > 0) {
 			buf_p = buf;
 			buf_sz = size;
-
-			ret = snprintf(buf_p, buf_sz,
-				"[consys_power_state][round:%lu]conninfra:%lu.%03lu,%lu;wf:%lu.%03lu,%lu;bt:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;[total]conninfra:%lu.%03lu,%lu;wf:%lu.%03lu,%lu;bt:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;",
-				mt6897_power_state_dump_data[0],
-				mt6897_power_state_dump_data[1],
-				mt6897_power_state_dump_data[2],
-				mt6897_power_state_dump_data[3],
-				mt6897_power_state_dump_data[4],
-				mt6897_power_state_dump_data[5],
-				mt6897_power_state_dump_data[6],
-				mt6897_power_state_dump_data[7],
-				mt6897_power_state_dump_data[8],
-				mt6897_power_state_dump_data[9],
-				mt6897_power_state_dump_data[10],
-				mt6897_power_state_dump_data[11],
-				mt6897_power_state_dump_data[12],
-				mt6897_power_state_dump_data[13],
-				mt6897_power_state_dump_data[14],
-				mt6897_power_state_dump_data[15],
-				mt6897_power_state_dump_data[16],
-				mt6897_power_state_dump_data[17],
-				mt6897_power_state_dump_data[18],
-				mt6897_power_state_dump_data[19],
-				mt6897_power_state_dump_data[20],
-				mt6897_power_state_dump_data[21],
-				mt6897_power_state_dump_data[22],
-				mt6897_power_state_dump_data[23],
-				mt6897_power_state_dump_data[24]);
-			if (ret)
-				pr_info("%s", buf_p);
 		}
+
+		ret = snprintf(buf_p, buf_sz,
+			"[consys_power_state][round:%lu]conninfra:%lu.%03lu,%lu;wf:%lu.%03lu,%lu;bt:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;[total]conninfra:%lu.%03lu,%lu;wf:%lu.%03lu,%lu;bt:%lu.%03lu,%lu;gps:%lu.%03lu,%lu;",
+			mt6897_power_state_dump_data[0],
+			mt6897_power_state_dump_data[1],
+			mt6897_power_state_dump_data[2],
+			mt6897_power_state_dump_data[3],
+			mt6897_power_state_dump_data[4],
+			mt6897_power_state_dump_data[5],
+			mt6897_power_state_dump_data[6],
+			mt6897_power_state_dump_data[7],
+			mt6897_power_state_dump_data[8],
+			mt6897_power_state_dump_data[9],
+			mt6897_power_state_dump_data[10],
+			mt6897_power_state_dump_data[11],
+			mt6897_power_state_dump_data[12],
+			mt6897_power_state_dump_data[13],
+			mt6897_power_state_dump_data[14],
+			mt6897_power_state_dump_data[15],
+			mt6897_power_state_dump_data[16],
+			mt6897_power_state_dump_data[17],
+			mt6897_power_state_dump_data[18],
+			mt6897_power_state_dump_data[19],
+			mt6897_power_state_dump_data[20],
+			mt6897_power_state_dump_data[21],
+			mt6897_power_state_dump_data[22],
+			mt6897_power_state_dump_data[23],
+			mt6897_power_state_dump_data[24]);
+		if (ret > 0)
+			pr_info("%s", buf_p);
 
 		/* Power state */
 		consys_power_state();
