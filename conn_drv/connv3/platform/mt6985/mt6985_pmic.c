@@ -437,7 +437,7 @@ int connv3_plt_pmic_parse_state_mt6985(char *buffer, int buf_sz)
 	i2c_last_wdata = register_dump[17];
 
 	if ((register_dump[0] & PMIC_PSW_VB_OC_EVT)) {
-		if (sprintf(psw_oc_string, "psw_oc_count=%d\n", ++psw_oc_count) < 0)
+		if (sprintf(psw_oc_string, "[connv3][pmic]psw_oc_count=%d\n", ++psw_oc_count) < 0)
 			pr_notice("log psw_oc_count fail\n");
 		conn_dbg_add_log(0, psw_oc_string);
 	}
