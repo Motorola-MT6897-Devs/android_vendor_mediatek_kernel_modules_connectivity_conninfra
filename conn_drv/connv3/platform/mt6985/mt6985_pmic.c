@@ -26,6 +26,8 @@
 #include "connv3_pmic_mng.h"
 #include "consys_reg_util.h"
 
+#include "conn_dbg.h"
+
 /*******************************************************************************
 *                         C O M P I L E R   F L A G S
 ********************************************************************************
@@ -374,6 +376,8 @@ int connv3_plt_pmic_parse_state_mt6985(char *buffer, int buf_sz)
 	char log_buf[TMP_LOG_SIZE];
 	int remain_size = TMP_LOG_SIZE - 1;
 	static int g_first_dump = 1;
+	static int psw_oc_count = 0;
+	char psw_oc_string[30];
 
 	if (!buffer){
 		pr_err("[%s] PMIC dump register is NULL\n", __func__);
@@ -431,6 +435,12 @@ int connv3_plt_pmic_parse_state_mt6985(char *buffer, int buf_sz)
 	i2c_last_dev = register_dump[15];
 	i2c_last_addr = register_dump[16];
 	i2c_last_wdata = register_dump[17];
+
+	if ((register_dump[0] & PMIC_PSW_VB_OC_EVT)) {
+		if (sprintf(psw_oc_string, "psw_oc_count=%d\n", ++psw_oc_count) < 0)
+			pr_notice("log psw_oc_count fail\n");
+		conn_dbg_add_log(0, psw_oc_string);
+	}
 
 	if (g_first_dump && pmic_stat == PMIC_SYSUV_EVT
 		&& buck_oc_stat == 0 && ldo_oc_stat == 0
