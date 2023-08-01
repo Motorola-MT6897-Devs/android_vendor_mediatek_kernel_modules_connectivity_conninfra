@@ -382,12 +382,13 @@ int connv3_plt_pmic_vsel_ctrl_mt6989(u32 enable)
 /* slave: PMIC, LDO OC info */
 #define PMIC_RFLDO_OC_EVT	(0x1U << 0)
 #define PMIC_HIOLDO_OC_EVT	(0x1U << 1)
+#define PMIC_PHYLDO_OC_EVT	(0x1U << 2)
 #define PMIC_IOLDO_OC_EVT	(0x1U << 3)
 #define PMIC_ALDO_OC_EVT	(0x1U << 4)
 #define PMIC_MLDO_OC_EVT	(0x1U << 5)
 #define PMIC_ANALDO_OC_EVT	(0x1U << 6)
 #define PMIC_PALDO_OC_EVT	(0x1U << 7)
-#define PMIC_LDO_OC		(PMIC_RFLDO_OC_EVT | PMIC_HIOLDO_OC_EVT | PMIC_IOLDO_OC_EVT | PMIC_ALDO_OC_EVT | PMIC_MLDO_OC_EVT | PMIC_ANALDO_OC_EVT | PMIC_ANALDO_OC_EVT | PMIC_PALDO_OC_EVT)
+#define PMIC_LDO_OC		(PMIC_RFLDO_OC_EVT | PMIC_HIOLDO_OC_EVT | PMIC_PHYLDO_OC_EVT | PMIC_IOLDO_OC_EVT | PMIC_ALDO_OC_EVT | PMIC_MLDO_OC_EVT | PMIC_ANALDO_OC_EVT | PMIC_PALDO_OC_EVT)
 
 /* slave: PMIC, BUCK PG info */
 #define PMIC_BUCK_PG_EVT_ADDR 0x19
@@ -432,6 +433,7 @@ bool connsys_pmic_ecid_ready = false;
 int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 {
 #define TMP_LOG_SIZE 128
+#define MT6376_REG_SIZE 8
 	u8 *register_dump;
 	u8 pmic_stat = 0;
 	u8 buck_oc_stat = 0, ldo_oc_stat = 0;
@@ -446,6 +448,8 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 	int remain_size = TMP_LOG_SIZE - 1;
 	static int g_first_dump = 1;
 	int ret;
+	const char *buck_name_str[MT6376_REG_SIZE] = {"", "BUCK_D ", "BUCK_IO ", "", "BUCK_R ", "PSW_VB ", "", ""};
+	const char *ldo_name_str[MT6376_REG_SIZE] = {"RFLDO ", "HIOLDO ", "PHYLDO ", "IOLDO ", "ALDO ", "MLDO ", "ANALDO ", "PALDO "};
 
 	if (!buffer){
 		pr_err("[%s] PMIC dump register is NULL\n", __func__);
@@ -546,6 +550,39 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 					(register_dump[10] & (PMIC_LDO_OC_MODE_DBGFLAG | PMIC_LDO_PG_MODE_DBGFLAG)),
 					(register_dump[11] & (PMIC_LDO_OC_MODE_DBGFLAG | PMIC_LDO_PG_MODE_DBGFLAG)),
 					(register_dump[12] & (PMIC_LDO_OC_MODE_DBGFLAG | PMIC_LDO_PG_MODE_DBGFLAG)));
+		}
+		if (buck_oc_stat) {
+			log_buf[0] = '\0';
+			for (i = 1; i < 6; i++) {
+				if (buck_oc_stat & (0x1 << i))
+					strncat(log_buf, buck_name_str[i], sizeof(buck_name_str[i]));
+			}
+			pr_notice("[MT6376] EXCEPTION BUCK OC: %s", log_buf);
+		}
+		if (ldo_oc_stat) {
+			log_buf[0] = '\0';
+			for (i = 0; i < MT6376_REG_SIZE; i++) {
+				if (ldo_oc_stat & (0x1 << i))
+					strncat(log_buf, ldo_name_str[i], sizeof(ldo_name_str[i]));
+			}
+			pr_notice("[MT6376] EXCEPTION LDO OC: %s", log_buf);
+		}
+		if (buck_pg_stat) {
+			log_buf[0] = '\0';
+			/* There is no PSW_VB PG */
+			for (i = 1; i < 5; i++) {
+				if (buck_pg_stat & (0x1 << i))
+					strncat(log_buf, buck_name_str[i], sizeof(buck_name_str[i]));
+			}
+			pr_notice("[MT6376] EXCEPTION BUCK PG: %s", log_buf);
+		}
+		if (ldo_pg_stat) {
+			log_buf[0] = '\0';
+			for (i = 0; i < MT6376_REG_SIZE; i++) {
+				if (ldo_pg_stat & (0x1 << i))
+					strncat(log_buf, ldo_name_str[i], sizeof(ldo_name_str[i]));
+			}
+			pr_notice("[MT6376] EXCEPTION LDO PG: %s", log_buf);
 		}
 
 		pr_notice("[MT6376] EXCEPTION UDS=[%d], Last i2c write to %s, write 0x%x by 0x%x\n",
