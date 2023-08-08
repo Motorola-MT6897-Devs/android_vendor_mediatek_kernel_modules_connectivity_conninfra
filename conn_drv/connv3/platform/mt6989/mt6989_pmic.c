@@ -448,6 +448,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 	int remain_size = TMP_LOG_SIZE - 1;
 	static int g_first_dump = 1;
 	int ret;
+	const char *pmic_exception_type_str[MT6376_REG_SIZE] = {"", "", "", "", "", "OverTemperature ", "OverVoltage ", "UVLO "};
 	const char *buck_name_str[MT6376_REG_SIZE] = {"", "BUCK_D ", "BUCK_IO ", "", "BUCK_R ", "PSW_VB ", "", ""};
 	const char *ldo_name_str[MT6376_REG_SIZE] = {"RFLDO ", "HIOLDO ", "PHYLDO ", "IOLDO ", "ALDO ", "MLDO ", "ANALDO ", "PALDO "};
 
@@ -551,11 +552,20 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 					(register_dump[11] & (PMIC_LDO_OC_MODE_DBGFLAG | PMIC_LDO_PG_MODE_DBGFLAG)),
 					(register_dump[12] & (PMIC_LDO_OC_MODE_DBGFLAG | PMIC_LDO_PG_MODE_DBGFLAG)));
 		}
+
+		if (pmic_stat) {
+			log_buf[0] = '\0';
+			for (i = 5; i <= 7; i++) {
+				if (pmic_stat & (0x1 << i))
+					strncat(log_buf, pmic_exception_type_str[i], strlen(pmic_exception_type_str[i]));
+			}
+			pr_notice("[MT6376] EXCEPTION PMIC exception: %s", log_buf);
+		}
 		if (buck_oc_stat) {
 			log_buf[0] = '\0';
 			for (i = 1; i < 6; i++) {
 				if (buck_oc_stat & (0x1 << i))
-					strncat(log_buf, buck_name_str[i], sizeof(buck_name_str[i]));
+					strncat(log_buf, buck_name_str[i], strlen(buck_name_str[i]));
 			}
 			pr_notice("[MT6376] EXCEPTION BUCK OC: %s", log_buf);
 		}
@@ -563,7 +573,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 			log_buf[0] = '\0';
 			for (i = 0; i < MT6376_REG_SIZE; i++) {
 				if (ldo_oc_stat & (0x1 << i))
-					strncat(log_buf, ldo_name_str[i], sizeof(ldo_name_str[i]));
+					strncat(log_buf, ldo_name_str[i], strlen(ldo_name_str[i]));
 			}
 			pr_notice("[MT6376] EXCEPTION LDO OC: %s", log_buf);
 		}
@@ -572,7 +582,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 			/* There is no PSW_VB PG */
 			for (i = 1; i < 5; i++) {
 				if (buck_pg_stat & (0x1 << i))
-					strncat(log_buf, buck_name_str[i], sizeof(buck_name_str[i]));
+					strncat(log_buf, buck_name_str[i], strlen(buck_name_str[i]));
 			}
 			pr_notice("[MT6376] EXCEPTION BUCK PG: %s", log_buf);
 		}
@@ -580,7 +590,7 @@ int connv3_plt_pmic_parse_state_mt6989(char *buffer, int buf_sz)
 			log_buf[0] = '\0';
 			for (i = 0; i < MT6376_REG_SIZE; i++) {
 				if (ldo_pg_stat & (0x1 << i))
-					strncat(log_buf, ldo_name_str[i], sizeof(ldo_name_str[i]));
+					strncat(log_buf, ldo_name_str[i], strlen(ldo_name_str[i]));
 			}
 			pr_notice("[MT6376] EXCEPTION LDO PG: %s", log_buf);
 		}
