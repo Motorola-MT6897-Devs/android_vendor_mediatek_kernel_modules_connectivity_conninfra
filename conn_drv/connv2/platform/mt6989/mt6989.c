@@ -123,7 +123,7 @@ static void consys_power_state(void)
 			buf_len += str_len;
 		}
 	}
-	pr_info("[%s] [0x%x] %s\n", __func__, r, buf);
+	pr_notice("[%s] [0x%x] %s\n", __func__, r, buf);
 
 	consys_debug_top_power_status_mt6989();
 }
@@ -221,7 +221,7 @@ static int consys_power_state_dump(char *buf, unsigned int size, int print_log)
 			mt6989_power_state_dump_data[23],
 			mt6989_power_state_dump_data[24]);
 		if (ret > 0)
-			pr_info("%s\n", buf_p);
+			pr_notice("%s\n", buf_p);
 
 		/* Power state */
 		consys_power_state();

@@ -137,21 +137,23 @@ void consys_set_if_pinmux_mt6989(unsigned int enable)
 
 static void conninfra_irq_rst_handler(struct work_struct *work)
 {
-	pr_info("[%s] ++++++\n", __func__);
+	pr_notice("[%s] ++++++\n", __func__);
 	conninfra_is_bus_hang();
 	conninfra_trigger_whole_chip_rst(CONNDRV_TYPE_CONNINFRA,
 									"conninfra bus timeout irq handling");
 	/* clear irq */
 	CONSYS_SET_BIT(CONN_BUS_CR_BASE +
 		CONN_BUS_CR_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_ADDR_OFFSET, (0x1U << 1));
+	enable_irq(g_conn_infra_bus_timeout_irq);
 	atomic_set(&g_conn_infra_bus_timeout_irq_flag, 0);
 }
 
 irqreturn_t consys_irq_handler_mt6989(int irq, void* data)
 {
 	if (atomic_read(&g_conn_infra_bus_timeout_irq_flag) == 0) {
-		pr_info("[%s] receive irq id=[%d]\n", __func__, irq);
+		pr_notice("[%s] receive irq id=[%d]\n", __func__, irq);
 		atomic_set(&g_conn_infra_bus_timeout_irq_flag, 1);
+		disable_irq_nosync(g_conn_infra_bus_timeout_irq);
 		schedule_work(&g_conninfra_irq_rst_work);
 	}
 

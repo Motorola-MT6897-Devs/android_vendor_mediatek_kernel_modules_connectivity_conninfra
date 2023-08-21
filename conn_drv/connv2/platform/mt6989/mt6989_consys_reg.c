@@ -77,7 +77,7 @@ static void consys_print_log(const char *title,
 		else
 			pr_notice("[%s] debug_buf len is not enough\n", __func__);
 	}
-	pr_info("%s\n", g_debug_buf_ptr);
+	pr_notice("%s\n", g_debug_buf_ptr);
 }
 
 int consys_reg_init_mt6989(struct platform_device *pdev)
@@ -178,7 +178,7 @@ static int __consys_reg_clock_detect(void)
 	}
 
 	if (r != 0x6) {
-		pr_info("%s fail:0x1802_3000 = %x\n", __func__, r);
+		pr_notice("%s fail:0x1802_3000 = %x\n", __func__, r);
 		return 0;
 	}
 	return 1;
@@ -253,7 +253,7 @@ int consys_is_bus_hang_mt6989(void)
 		return -1;
 	}
 
-	pr_info("[CONN_BUS] version=%s\n", MT6989_CONN_INFRA_BUS_DUMP_VERSION);
+	pr_notice("[CONN_BUS] version=%s\n", MT6989_CONN_INFRA_BUS_DUMP_VERSION);
 	consys_print_power_debug_dbg_level_0_mt6989_debug_gen(
 		CONNINFRA_BUS_LOG_LEVEL_HOST_ONLY, g_debug_info_ptr);
 	consys_print_log("[CONN_POWER_A]", g_debug_info_ptr);
@@ -276,7 +276,7 @@ int consys_is_bus_hang_mt6989(void)
 
 	is_clock_fail = consys_check_ap2conn_infra_off_clock_mt6989();
 	if (is_clock_fail)
-		pr_info("[%s] ap2conn_infra_off clock fail", __func__);
+		pr_notice("[%s] ap2conn_infra_off clock fail", __func__);
 
 	ret = consys_check_ap2conn_infra_off_irq_mt6989();
 	if (ret)
