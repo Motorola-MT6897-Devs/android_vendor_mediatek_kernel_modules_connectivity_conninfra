@@ -24,7 +24,7 @@ unsigned int consys_get_hw_ver_mt6989(void)
 	return CONN_HW_VER_MT6989;
 }
 
-unsigned int consys_get_adie_chipid_mt6989(void)
+unsigned int consys_get_adie_chipid_mt6989(unsigned int drv_type)
 {
 	return CONNSYS_A_DIE_ID_MT6989;
 }

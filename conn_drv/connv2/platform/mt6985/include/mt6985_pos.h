@@ -17,7 +17,7 @@ bool consys_is_rc_mode_enable_mt6985(void);
 int consys_conninfra_on_power_ctrl_mt6985(unsigned int enable);
 int consys_polling_chipid_mt6985(void);
 int connsys_d_die_cfg_mt6985(void);
-int connsys_spi_master_cfg_mt6985(unsigned int next_status);
+int connsys_spi_master_cfg_mt6985(unsigned int curr_status, unsigned int next_status);
 int consys_conninfra_wakeup_mt6985(void);
 int consys_conninfra_sleep_mt6985(void);
 int connsys_subsys_pll_initial_mt6985(void);

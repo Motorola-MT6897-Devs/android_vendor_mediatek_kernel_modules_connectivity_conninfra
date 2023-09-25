@@ -25,7 +25,7 @@ enum conn_semaphore_type {
 };
 
 int consys_platform_spm_conn_ctrl_mt6989(unsigned int enable);
-unsigned int consys_get_adie_chipid_mt6989(void);
+unsigned int consys_get_adie_chipid_mt6989(unsigned int drv_type);
 unsigned int consys_get_hw_ver_mt6989(void);
 int consys_enable_power_dump_mt6989(void);
 int consys_reset_power_state_mt6989(void);

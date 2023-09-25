@@ -18,8 +18,8 @@ int consys_conninfra_sleep_mt6897(void);
 int consys_polling_chipid_mt6897(void);
 
 int connsys_d_die_cfg_mt6897(void);
-int connsys_spi_master_cfg_mt6897(unsigned int next_status);
-int connsys_a_die_cfg_mt6897(void);
+int connsys_spi_master_cfg_mt6897(unsigned int curr_status, unsigned int next_status);
+int connsys_a_die_cfg_mt6897(unsigned int curr_status, unsigned int next_status);
 void connsys_afe_sw_patch_mt6897(void);
 int connsys_afe_wbg_cal_mt6897(void);
 int connsys_subsys_pll_initial_mt6897(void);

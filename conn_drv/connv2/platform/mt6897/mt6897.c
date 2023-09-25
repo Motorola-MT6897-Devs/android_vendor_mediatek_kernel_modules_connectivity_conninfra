@@ -474,7 +474,7 @@ int consys_thermal_query_mt6897(void)
 	return res;
 }
 
-unsigned int consys_adie_detection_mt6897(void)
+unsigned int consys_adie_detection_mt6897(unsigned int drv_type)
 {
 	return ADIE_6637;
 }

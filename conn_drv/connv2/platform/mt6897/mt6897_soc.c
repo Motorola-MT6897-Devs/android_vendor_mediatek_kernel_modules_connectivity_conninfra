@@ -144,7 +144,8 @@ int consys_conninfra_on_power_ctrl_mt6897(unsigned int enable)
 	return ret;
 }
 
-void consys_set_if_pinmux_mt6897(unsigned int enable)
+void consys_set_if_pinmux_mt6897(unsigned int enable,
+            unsigned int curr_status, unsigned int next_status)
 {
 #ifndef CFG_CONNINFRA_ON_CTP
 	struct pinctrl_state *tcxo_pinctrl_set;
@@ -154,6 +155,9 @@ void consys_set_if_pinmux_mt6897(unsigned int enable)
 	int clock_type = consys_co_clock_type_mt6897();
 
 	if (enable) {
+		if (curr_status != 0)
+			return;
+
 		consys_set_if_pinmux_mt6897_gen(1);
 		/* if(TCXO mode)
 		 *	Set GPIO135 pinmux for TCXO mode (Aux3)(CONN_TCXOENA_REQ)
@@ -178,6 +182,9 @@ void consys_set_if_pinmux_mt6897(unsigned int enable)
 	#endif /* defined(CFG_CONNINFRA_ON_CTP) */
 		}
 	} else {
+		if (next_status != 0)
+			return;
+
 		consys_set_if_pinmux_mt6897_gen(0);
 
 		if (clock_type == CONNSYS_CLOCK_SCHEMATIC_26M_EXTCXO ||

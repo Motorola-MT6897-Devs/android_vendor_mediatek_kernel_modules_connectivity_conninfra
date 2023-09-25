@@ -21,7 +21,8 @@ static struct regulator *reg_VRFIO18; /* MT6363 workaround VCN15 -> VRFIO18 */
 static struct regulator *reg_VANT18;
 
 static int consys_plt_pmic_get_from_dts_mt6985(struct platform_device*, struct conninfra_dev_cb*);
-static int consys_plt_pmic_common_power_ctrl_mt6985(unsigned int);
+static int consys_plt_pmic_common_power_ctrl_mt6985(unsigned int,
+					unsigned int curr_status, unsigned int next_status);
 static int consys_plt_pmic_gps_power_ctrl_mt6985(unsigned int);
 
 
@@ -31,11 +32,15 @@ const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6985 = {
 	.consys_pmic_gps_power_ctrl = consys_plt_pmic_gps_power_ctrl_mt6985,
 };
 
-static int consys_plt_pmic_common_power_ctrl_mt6985(unsigned int enable)
+static int consys_plt_pmic_common_power_ctrl_mt6985(unsigned int enable,
+					unsigned int curr_status, unsigned int next_status)
 {
 	static bool setup = false;
 
 	if (consys_is_rc_mode_enable_mt6985() && enable) {
+		if (curr_status != 0)
+			return 0;
+
 		/* Full HW signal control, only need config it. */
 		if (!setup) {
 			/* 1. set PMIC VANT18 LDO PMIC HW mode control by PMRC_EN[10]

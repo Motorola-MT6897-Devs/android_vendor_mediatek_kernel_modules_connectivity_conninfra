@@ -44,10 +44,10 @@ int connsys_d_die_cfg_mt6989_atf(void)
 	return ret;
 }
 
-int connsys_spi_master_cfg_mt6989_atf(unsigned int next_status)
+int connsys_spi_master_cfg_mt6989_atf(unsigned int curr_status, unsigned int next_status)
 {
 	int ret = 0;
-	CONNSYS_SMC_CALL_RET(SMC_CONNSYS_SPI_MASTER_CFG_OPID, 0, 0, 0, 0, 0, 0, ret);
+	CONNSYS_SMC_CALL_RET(SMC_CONNSYS_SPI_MASTER_CFG_OPID, curr_status, next_status, 0, 0, 0, 0, ret);
 	return ret;
 }
 

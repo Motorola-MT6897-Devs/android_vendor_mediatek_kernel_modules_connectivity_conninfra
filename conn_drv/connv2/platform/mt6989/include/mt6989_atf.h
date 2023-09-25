@@ -11,7 +11,7 @@
 int consys_init_atf_data_mt6989_atf(void);
 int consys_polling_chipid_mt6989_atf(void);
 int connsys_d_die_cfg_mt6989_atf(void);
-int connsys_spi_master_cfg_mt6989_atf(unsigned int next_status);
+int connsys_spi_master_cfg_mt6989_atf(unsigned int curr_status, unsigned int next_status);
 int connsys_subsys_pll_initial_mt6989_atf(void);
 int connsys_low_power_setting_mt6989_atf(unsigned int curr_status, unsigned int next_status);
 int consys_conninfra_wakeup_mt6989_atf(void);

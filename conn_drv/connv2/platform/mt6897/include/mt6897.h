@@ -57,7 +57,7 @@ int consys_enable_power_dump_mt6897(void);
 int consys_reset_power_state_mt6897(void);
 int consys_power_state_dump_mt6897(char *buf, unsigned int size);
 
-unsigned int consys_adie_detection_mt6897(void);
+unsigned int consys_adie_detection_mt6897(unsigned int drv_type);
 void consys_set_mcu_control_mt6897(int type, bool onoff);
 
 int consys_pre_cal_backup_mt6897(unsigned int offset, unsigned int size);

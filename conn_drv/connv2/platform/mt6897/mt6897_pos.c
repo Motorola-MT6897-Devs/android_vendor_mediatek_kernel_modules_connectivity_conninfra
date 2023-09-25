@@ -116,8 +116,11 @@ static int connsys_adie_clock_buffer_setting(unsigned int curr_status,
 	return 0;
 }
 
-int connsys_spi_master_cfg_mt6897(unsigned int next_status)
+int connsys_spi_master_cfg_mt6897(unsigned int curr_status, unsigned int next_status)
 {
+	if (curr_status != 0)
+		return 0;
+
 	connsys_wt_slp_top_ctrl_adie6637_mt6897_gen();
 	return 0;
 }
@@ -140,7 +143,7 @@ int consys_get_sleep_mode_mt6897(void)
 	return 3;
 }
 
-int connsys_a_die_cfg_mt6897(void)
+int connsys_a_die_cfg_mt6897(unsigned int curr_status, unsigned int next_status)
 {
 #ifdef CONFIG_FPGA_EARLY_PORTING
 	pr_info("[%s] not support on FPGA", __func__);
@@ -153,6 +156,9 @@ int connsys_a_die_cfg_mt6897(void)
 	unsigned int sleep_mode = 0;
 	unsigned int clock_type = 0;
 	unsigned int sysram_clock_type = 0;
+
+	if (curr_status != 0)
+		return 0;
 
 	clock_type = consys_co_clock_type_mt6897();
 	/* FW only cares 26M or 52M */

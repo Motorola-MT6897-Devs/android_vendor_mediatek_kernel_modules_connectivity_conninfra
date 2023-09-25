@@ -11,8 +11,8 @@
 int consys_init_atf_data_mt6897_atf(void);
 int consys_polling_chipid_mt6897_atf(void);
 int connsys_d_die_cfg_mt6897_atf(void);
-int connsys_spi_master_cfg_mt6897_atf(unsigned int next_status);
-int connsys_a_die_cfg_mt6897_atf(void);
+int connsys_spi_master_cfg_mt6897_atf(unsigned int curr_status, unsigned int next_status);
+int connsys_a_die_cfg_mt6897_atf(unsigned int curr_status, unsigned int next_status);
 int connsys_afe_wbg_cal_mt6897_atf(void);
 void connsys_afe_sw_patch_mt6897_atf(void);
 int connsys_subsys_pll_initial_mt6897_atf(void);

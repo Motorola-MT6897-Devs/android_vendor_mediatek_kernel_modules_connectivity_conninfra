@@ -67,8 +67,10 @@ static struct conninfra_dev_cb* g_dev_cb;
 */
 static int consys_plt_pmic_get_from_dts_mt6897(struct platform_device*, struct conninfra_dev_cb*);
 
-static int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int);
-static int consys_plt_pmic_common_power_low_power_mode_mt6897(unsigned int);
+static int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int,
+					unsigned int curr_status, unsigned int next_status);
+static int consys_plt_pmic_common_power_low_power_mode_mt6897(unsigned int,
+					unsigned int curr_status, unsigned int next_status);
 static int consys_plt_pmic_wifi_power_ctrl_mt6897(unsigned int);
 static int consys_plt_pmic_bt_power_ctrl_mt6897(unsigned int);
 static int consys_plt_pmic_gps_power_ctrl_mt6897(unsigned int);
@@ -145,7 +147,8 @@ int consys_plt_pmic_get_from_dts_mt6897(struct platform_device *pdev, struct con
 	return 0;
 }
 
-int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int enable)
+int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int enable,
+					unsigned int curr_status, unsigned int next_status)
 {
 	int sleep_mode;
 	int ret = 0;
@@ -153,6 +156,9 @@ int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int enable)
 
 	sleep_mode = consys_get_sleep_mode_mt6897();
 	if (enable) {
+		if (curr_status != 0)
+			return 0;
+
 		if (consys_get_adie_chipid_mt6897() == ADIE_6637) {
 			/* 1. set PMIC VRFIO18 LDO 1.7V (MT6363 workaround VCN15 -> VRFIO18 ) */
 			regulator_set_voltage(reg_VRFIO18, 1700000, 1700000);
@@ -210,6 +216,8 @@ int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int enable)
 		 * POS not sufficient.
 		 * lack of MT6686 setting.
 		 */
+		if (next_status != 0)
+			return 0;
 
 		if (consys_get_adie_chipid_mt6897() == ADIE_6637) {
 			/* vant18 is enabled in consys_plt_pmic_common_power_low_power_mode_mt6897 */
@@ -260,13 +268,17 @@ int consys_plt_pmic_common_power_ctrl_mt6897(unsigned int enable)
 	return ret;
 }
 
-int consys_plt_pmic_common_power_low_power_mode_mt6897(unsigned int enable)
+int consys_plt_pmic_common_power_low_power_mode_mt6897(unsigned int enable,
+					unsigned int curr_status, unsigned int next_status)
 {
 	int ret = 0;
 	int sleep_mode;
 	struct regmap *r = g_regmap_mt6363;
 
 	if (!enable)
+		return 0;
+
+	if (curr_status != 0)
 		return 0;
 
 	/* Set buckboost to 3.65V (for VCN33_1 & VCN33_2) */

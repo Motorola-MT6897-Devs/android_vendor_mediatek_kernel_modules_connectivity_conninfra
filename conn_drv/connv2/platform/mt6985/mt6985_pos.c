@@ -94,8 +94,11 @@ int connsys_d_die_cfg_mt6985(void)
 	return 0;
 }
 
-int connsys_spi_master_cfg_mt6985(unsigned int next_status)
+int connsys_spi_master_cfg_mt6985(unsigned int curr_status, unsigned int next_status)
 {
+	if (curr_status != 0)
+		return 0;
+
 	connsys_wt_slp_top_ctrl_adie6686_mt6985_gen();
 	return 0;
 }

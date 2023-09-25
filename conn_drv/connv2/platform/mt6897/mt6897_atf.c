@@ -45,20 +45,20 @@ int connsys_d_die_cfg_mt6897_atf(void)
 	return ret;
 }
 
-int connsys_spi_master_cfg_mt6897_atf(unsigned int next_status)
+int connsys_spi_master_cfg_mt6897_atf(unsigned int curr_status, unsigned int next_status)
 {
 	int ret = 0;
-	CONNSYS_SMC_CALL_RET(SMC_CONNSYS_SPI_MASTER_CFG_OPID, 0, 0, 0, 0, 0, 0, ret);
+	CONNSYS_SMC_CALL_RET(SMC_CONNSYS_SPI_MASTER_CFG_OPID, curr_status, next_status, 0, 0, 0, 0, ret);
 	return ret;
 }
 
-int connsys_a_die_cfg_mt6897_atf(void)
+int connsys_a_die_cfg_mt6897_atf(unsigned int curr_status, unsigned int next_status)
 {
 	int ret = 0;
 	struct arm_smccc_res res;
 
 	arm_smccc_smc(MTK_SIP_KERNEL_CONNSYS_CONTROL, SMC_CONNSYS_A_DIE_CFG_OPID,
-		      0, 0, 0, 0, 0, 0, &res);
+		      curr_status, next_status, 0, 0, 0, 0, &res);
 	ret = res.a0;
 	conn_hw_env.adie_hw_version = res.a1;
 
