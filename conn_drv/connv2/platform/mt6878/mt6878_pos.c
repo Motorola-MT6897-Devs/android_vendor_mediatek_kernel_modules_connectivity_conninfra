@@ -288,10 +288,10 @@ int connsys_a_die_cfg_mt6878(unsigned int curr_status, unsigned int next_status)
 
 	connsys_a_die_cfg_PART2_mt6878_gen(curr_status, next_status, hw_ver_id);
 
+	consys_sema_release_mt6878(CONN_SEMA_RFSPI_INDEX);
+
 	if (consys_get_adie_chipid_mt6878() == ADIE_6686)
 		consys_m10_srclken_cfg_mt6878_gen(0);
-
-	consys_sema_release_mt6878(CONN_SEMA_RFSPI_INDEX);
 
 	if (consys_get_adie_chipid_mt6878() == ADIE_6637)
 		connsys_a_die_switch_to_conn_mode_mt6878_gen();

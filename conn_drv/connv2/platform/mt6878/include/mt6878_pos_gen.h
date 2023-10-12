@@ -401,6 +401,7 @@ int consys_conninfra_sleep_mt6878_gen(void);
 #define CONSYS_GEN_CKGEN_BUS_BPLL_DIV_2_OFFSET_ADDR                                         0x4
 #define CONSYS_GEN_CKGEN_BUS_WPLL_DIV_1_OFFSET_ADDR                                         0x8
 #define CONSYS_GEN_CKGEN_BUS_WPLL_DIV_2_OFFSET_ADDR                                         0xC
+#define CONSYS_GEN_CKGEN_RFSPI_INST2_CK_SEL_SW_MODE_EN                                      0x34
 #define CONSYS_GEN_CLKGEN_RFSPI_CK_CTRL_OFFSET_ADDR                                         0x38
 #define CONSYS_GEN_CKGEN_BUS_OFFSET_ADDR                                                    0x50
 #define CONSYS_GEN_CKGEN_COEX_0_SET_OFFSET_ADDR                                             0x64

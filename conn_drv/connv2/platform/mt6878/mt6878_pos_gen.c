@@ -935,19 +935,8 @@ int connsys_a_die_cfg_adie6637_read_adie_id_mt6878_gen(
 
 int connsys_a_die_cfg_adie6637_PART1_mt6878_gen(void)
 {
-	mapped_addr vir_addr_consys_gen_conn_rf_spi_mst_reg_base = NULL;
-
 	if (CONN_THERM_CTL_BASE == 0) {
 		pr_notice("CONN_THERM_CTL_BASE is not defined\n");
-		return -1;
-	}
-
-	vir_addr_consys_gen_conn_rf_spi_mst_reg_base =
-		ioremap(CONSYS_GEN_CONN_RF_SPI_MST_REG_BASE_ADDR, 0xC);
-
-	if (!vir_addr_consys_gen_conn_rf_spi_mst_reg_base) {
-		pr_notice("vir_addr_consys_gen_conn_rf_spi_mst_reg_base(%x) ioremap fail\n",
-			CONSYS_GEN_CONN_RF_SPI_MST_REG_BASE_ADDR);
 		return -1;
 	}
 
@@ -963,7 +952,7 @@ int connsys_a_die_cfg_adie6637_PART1_mt6878_gen(void)
 
 	/* update spi fm read extra bit setting */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
-		CONSYS_REG_WRITE_MASK(vir_addr_consys_gen_conn_rf_spi_mst_reg_base +
+		CONSYS_REG_WRITE_MASK(CONN_REG_CONN_RF_SPI_MST_REG_ADDR +
 			CONSYS_GEN_FM_CTRL_OFFSET_ADDR, 0x0, 0x80FF);
 	#endif
 
@@ -972,9 +961,6 @@ int connsys_a_die_cfg_adie6637_PART1_mt6878_gen(void)
 		CONSYS_REG_WRITE(CONN_THERM_CTL_BASE +
 			CONSYS_GEN_THERM_AADDR_OFFSET_ADDR, 0x50305A00);
 	#endif
-
-	if (vir_addr_consys_gen_conn_rf_spi_mst_reg_base)
-		iounmap(vir_addr_consys_gen_conn_rf_spi_mst_reg_base);
 
 	return 0;
 }
@@ -2676,6 +2662,12 @@ int connsys_low_power_setting_mt6878_gen(void)
 			CONSYS_GEN_CLKGEN_RFSPI_CK_CTRL_OFFSET_ADDR, (0x1U << 4));
 	#endif
 
+	/* set rfspi_2 clock switch to SW mode */
+	#ifndef CONFIG_FPGA_EARLY_PORTING
+		CONSYS_SET_BIT(CONN_CLKGEN_TOP_BASE +
+			CONSYS_GEN_CKGEN_RFSPI_INST2_CK_SEL_SW_MODE_EN, (0x1U << 0));
+	#endif
+
 	/* set conn_infra sleep count to host side control */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		CONSYS_SET_BIT(CONN_HOST_CSR_TOP_BASE +
@@ -2768,21 +2760,11 @@ int connsys_adie_top_ck_en_ctl_mt6878_gen(unsigned int enable)
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 	int check = 0;
 	#endif
-	mapped_addr vir_addr_consys_gen_conn_wt_slp_ctl_reg_base = NULL;
-
-	vir_addr_consys_gen_conn_wt_slp_ctl_reg_base =
-		ioremap(CONSYS_GEN_CONN_WT_SLP_CTL_REG_BASE_ADDR, 0x120);
-
-	if (!vir_addr_consys_gen_conn_wt_slp_ctl_reg_base) {
-		pr_notice("vir_addr_consys_gen_conn_wt_slp_ctl_reg_base(%x) ioremap fail\n",
-			CONSYS_GEN_CONN_WT_SLP_CTL_REG_BASE_ADDR);
-		return -1;
-	}
 
 	if (enable == 1) {
 		/* Eaable dig_top_ck in Adie (Adress in Adie: 12'hA00) */
 		#ifndef CONFIG_FPGA_EARLY_PORTING
-			CONSYS_SET_BIT(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+			CONSYS_SET_BIT(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR, (0x1U << 0));
 		#endif
 
@@ -2790,21 +2772,20 @@ int connsys_adie_top_ck_en_ctl_mt6878_gen(unsigned int enable)
 		/* (polling "100 times" and each polling interval is "5 us") */
 		#ifndef CONFIG_FPGA_EARLY_PORTING
 			check = 0;
-			CONSYS_REG_BIT_POLLING(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+			CONSYS_REG_BIT_POLLING(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR,
 				1, 0, 100, 5, check);
 			if (check != 0) {
 				pr_notice("polling enable A-die top_ck_en_0 fail, Status=0x%08x\n",
-					CONSYS_REG_READ(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+					CONSYS_REG_READ(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 						CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR));
-				iounmap(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base);
 				return check;
 			}
 		#endif
 	} else {
 		/* Disable dig_top_ck in Adie (Adress in Adie: 12'hA00) */
 		#ifndef CONFIG_FPGA_EARLY_PORTING
-			CONSYS_CLR_BIT(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+			CONSYS_CLR_BIT(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR, (0x1U << 0));
 		#endif
 
@@ -2812,21 +2793,17 @@ int connsys_adie_top_ck_en_ctl_mt6878_gen(unsigned int enable)
 		/* (polling "100 times" and each polling interval is "5 us") */
 		#ifndef CONFIG_FPGA_EARLY_PORTING
 			check = 0;
-			CONSYS_REG_BIT_POLLING(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+			CONSYS_REG_BIT_POLLING(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 				CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR,
 				1, 0, 100, 5, check);
 			if (check != 0) {
 				pr_notice("polling disable A-die top_ck_en_0 fail, Status=0x%08x\n",
-					CONSYS_REG_READ(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+					CONSYS_REG_READ(CONN_REG_CONN_WT_SLP_CTL_REG_ADDR +
 						CONSYS_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR));
-				iounmap(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base);
 				return check;
 			}
 		#endif
 	}
-
-	if (vir_addr_consys_gen_conn_wt_slp_ctl_reg_base)
-		iounmap(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base);
 
 	return 0;
 }

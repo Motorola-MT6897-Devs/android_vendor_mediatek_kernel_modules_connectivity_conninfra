@@ -127,12 +127,12 @@ int consys_check_conninfra_on_domain_status_mt6878(void)
 
 	/* AP2CONN_INFRA ON */
 	/* 1. Check ap2conn gals sleep protect status */
-	/* - 0x1002_C1CC[0] / 0x1002_C00C[25] (rx/tx) */
+	/* - 0x1000_1C9C[0] / 0x1000_1C5C[12] (rx/tx) */
 	/* (sleep protect enable ready) both of them should be 1'b0 */
 	r1 = CONSYS_REG_READ_BIT(INFRACFG_AO_REG_BASE +
 		CONSYS_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR, (0x1 << 0));
 	r2 = CONSYS_REG_READ_BIT(INFRACFG_AO_REG_BASE +
-		CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR, (0x1 << 25));
+		CONSYS_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR, (0x1 << 12));
 	if (r1 || r2) {
 		pr_info("%s 0x1000_1C9C[0] = %x, 0x1000_1C5C[12] = %x\n", __func__, r1, r2);
 		if (r1)
