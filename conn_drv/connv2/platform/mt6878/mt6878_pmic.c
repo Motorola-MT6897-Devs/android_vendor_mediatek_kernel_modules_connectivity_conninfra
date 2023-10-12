@@ -186,14 +186,14 @@ int consys_plt_pmic_get_from_dts_mt6878(struct platform_device *pdev, struct con
 
 	/* raise VCN33_1 to 3.5V */
 	conf = conninfra_conf_get_cfg();
-	if ((conf != NULL) && (consys_get_adie_chipid_mt6878() != ADIE_6637)) {
-		vcn33_1_voltage = conf->vcn33_1_voltage;
+	vcn33_1_voltage = conf->vcn33_1_voltage;
+	if ((vcn33_1_voltage != 0) && (consys_get_adie_chipid_mt6878() != ADIE_6637)) {
 		regulator_set_voltage(reg_VCN33_1, vcn33_1_voltage, vcn33_1_voltage);
+		pr_info("[%s] Raise VCN33_1 by customized options = %u", __func__, vcn33_1_voltage);
 	} else {
 		regulator_set_voltage(reg_VCN33_1, 3300000, 3300000);
+		pr_info("[%s] Set VCN33_1 by default options = 3300000", __func__);
 	}
-
-	pr_info("[%s] Raise VCN33_1 by customized options = %u", __func__, reg_VCN33_1);
 
 	return 0;
 }
