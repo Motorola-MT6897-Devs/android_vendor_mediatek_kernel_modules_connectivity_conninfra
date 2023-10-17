@@ -19,8 +19,6 @@ int consys_get_co_clock_type_mt6878(void)
 	const struct conninfra_conf *conf;
 	struct regmap *map = consys_clock_mng_get_regmap();
 	int value = 0;
-	const char *clock_name[CONNSYS_CLOCK_SCHEMATIC_MAX] = {
-		"26M co-clock", "52M co-clock", "26M tcxo", "52M tcxo"};
 	static int clock_type = CONNSYS_CLOCK_SCHEMATIC_26M_COTMS;
 	static int first_power_on = 0;
 
@@ -50,7 +48,8 @@ int consys_get_co_clock_type_mt6878(void)
 			clock_type = CONNSYS_CLOCK_SCHEMATIC_52M_COTMS;
 	}
 	pr_info("[%s] conf->tcxo_gpio=%d conn_hw_env.tcxo_support=%d, %s",
-		__func__, conf->tcxo_gpio, conn_hw_env.tcxo_support, clock_name[clock_type]);
+		__func__, conf->tcxo_gpio, conn_hw_env.tcxo_support,
+		clock_mng_get_schematic_name(clock_type));
 
 	return clock_type;
 }
