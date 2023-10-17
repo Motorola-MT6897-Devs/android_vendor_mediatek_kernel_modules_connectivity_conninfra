@@ -1569,6 +1569,11 @@ int connsys_a_die_thermal_cal_adie6631_conf_mt6878_gen(
 
 int connsys_a_die_cfg_adie6631_PART2_mt6878_gen(unsigned int hw_ver_id)
 {
+	if (CONN_THERM_CTL_BASE == 0) {
+		pr_notice("CONN_THERM_CTL_BASE is not defined\n");
+		return -1;
+	}
+
 	/* turn on A-die Wi-Fi clock */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		consys_spi_write_nolock_mt6878(SYS_SPI_TOP, CONSYS_GEN_ADIE6631_ATOP_RG_WF_CLK_EN, 0xFFFFFFFF);
@@ -1611,6 +1616,12 @@ int connsys_a_die_cfg_adie6631_PART2_mt6878_gen(unsigned int hw_ver_id)
 	/* turn off A-die TOP clock for power saving */
 	#ifndef CONFIG_FPGA_EARLY_PORTING
 		consys_spi_write_nolock_mt6878(SYS_SPI_TOP, CONSYS_GEN_ADIE6631_ATOP_RG_TOP_CLK_EN, 0x0);
+	#endif
+
+	/* Update Thermal addr for 6631 */
+	#ifndef CONFIG_FPGA_EARLY_PORTING
+		CONSYS_REG_WRITE(CONN_THERM_CTL_BASE +
+			CONSYS_GEN_THERM_AADDR_OFFSET_ADDR, 0x50B05A10);
 	#endif
 
 	return 0;
