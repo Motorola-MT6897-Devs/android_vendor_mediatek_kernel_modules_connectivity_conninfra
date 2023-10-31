@@ -43,6 +43,7 @@
  ********************************************************************************
  */
 static u64 sema_get_time[CONN_SEMA_NUM_MAX];
+static u64 sw_sema_get_time[CONN_SW_SEMA_NUM_MAX];
 static unsigned long g_sema_irq_flags = 0;
 static unsigned long g_sw_sema_irq_flags = 0;
 
@@ -247,8 +248,8 @@ int connsys_a_die_cfg_mt6878(unsigned int curr_status, unsigned int next_status)
 		if (consys_sema_m4_acquire_timeout_mt6878(0, CONN_SEMA_TIMEOUT)
 			== CONN_SEMA_GET_FAIL) {
 			connsys_adie_top_ck_en_ctl_mt6878_gen(0);
-			consys_m10_srclken_cfg_mt6878_gen(0);
 			consys_sema_release_mt6878(CONN_SEMA_RFSPI_INDEX);
+			consys_m10_srclken_cfg_mt6878_gen(0);
 			pr_err("[SPI READ] Require semaphore fail\n");
 			return CONNINFRA_SPI_OP_FAIL;
 		}
@@ -412,16 +413,19 @@ int consys_sema_m4_acquire_timeout_mt6878(unsigned int index, unsigned int usec)
 		return CONN_SEMA_GET_FAIL;
 	for (i = 0; i < usec; i++) {
 		if (consys_sema_m4_acquire(index) == CONN_SEMA_GET_SUCCESS) {
-			sema_get_time[index] = get_jiffies();
-			if (index == CONN_SEMA_RFSPI_INDEX)
-				local_irq_save(g_sw_sema_irq_flags);
+			sw_sema_get_time[index] = get_jiffies();
 			return CONN_SEMA_GET_SUCCESS;
 		}
 		udelay(1);
 	}
 
-	pr_err("Get semaphore 0x%x timeout, flags=%lu, dump status:\n", index, g_sw_sema_irq_flags);
-	pr_err("M4:[0x%x]\n", CONSYS_REG_READ(CONN_SEMAPHORE_CONN_SEMA_OWN_BY_M4_STA_REP_SW_ADDR ));
+	pr_err("Get sw semaphore 0x%x timeout, dump status:\n", index);
+	pr_err("M4:[0x%x] M5:[0x%x] M6:[0x%x] M7:[0x%x]\n",
+		CONSYS_REG_READ(CONN_SEMAPHORE_CONN_SEMA_OWN_BY_M4_STA_REP_SW_ADDR),
+		CONSYS_REG_READ(CONN_SEMAPHORE_CONN_SEMA_OWN_BY_M5_STA_REP_ADDR),
+		CONSYS_REG_READ(CONN_SEMAPHORE_CONN_SEMA_OWN_BY_M6_STA_REP_ADDR),
+		CONSYS_REG_READ(CONN_SEMAPHORE_CONN_SEMA_OWN_BY_M7_STA_REP_ADDR));
+
 	/* Debug feature in Android, remove it in CTP */
 	/*
 	 * consys_reg_mng_dump_cpupcr(CONN_DUMP_CPUPCR_TYPE_ALL, 10, 200);
@@ -453,11 +457,9 @@ void consys_sema_m4_release_mt6878(unsigned int index)
 	if (index >= CONN_SW_SEMA_NUM_MAX)
 		return;
 	CONSYS_REG_WRITE(
-		(CONN_SEMAPHORE_CONN_SEMA00_M4_OWN_STA_SW_ADDR + index * 4), 0x1);
+		(CONN_SEMAPHORE_CONN_SEMA00_M4_OWN_REL_SW_ADDR + index * 4), 0x1);
 
-	duration = time_duration(sema_get_time[index]);
-	if (index == CONN_SEMA_RFSPI_INDEX)
-		local_irq_restore(g_sw_sema_irq_flags);
+	duration = time_duration(sw_sema_get_time[index]);
 	if (duration > SEMA_HOLD_TIME_THRESHOLD)
 		pr_notice("%s hold semaphore (%d), flags=%lu for %lu ms\n",
 			__func__, index, g_sw_sema_irq_flags, duration);
