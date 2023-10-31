@@ -138,7 +138,7 @@ unsigned long long consys_soc_timestamp_get_mt6878(void)
 	 * - 0x0008	CNTCV_L	32	System counter count value low
 	 * - 0x000C	CNTCV_H	32	System counter count value high
 	 */
-	addr = ioremap(0x1c011000, 0x10);
+	addr = ioremap(0x1cc11000, 0x10);
 	if (addr) {
 		do {
 			tick_h = CONSYS_REG_READ(addr + 0x000c);
