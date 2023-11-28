@@ -104,6 +104,7 @@ struct connsys_dump_ctx {
 	struct coredump_hw_config hw_config;
 	struct connsys_dump_info info;
 	unsigned int full_emi_size;
+	OSAL_SLEEPABLE_LOCK ctx_lock;
 };
 
 #define DUMP_REGION_NAME_LENGTH	10
@@ -189,6 +190,7 @@ static int conndump_info_format(
 	char* buf, unsigned int max_len,
 	bool full_dump);
 static void conndump_exception_show(struct connsys_dump_ctx* ctx, bool full_dump);
+static int connsys_coredump_setup_dump_region_internal(struct connsys_dump_ctx* ctx);
 /* memory allocate/free */
 static void* conndump_malloc(unsigned int size);
 static void conndump_free(const void* dst);
@@ -1297,12 +1299,18 @@ static void conndump_exception_show(struct connsys_dump_ctx* ctx, bool full_dump
 void connsys_coredump_clean(void* handler)
 {
 	struct connsys_dump_ctx* ctx = (struct connsys_dump_ctx*)handler;
-
+	int lock_ret;
 	if (ctx == NULL)
 		return;
 
 	pr_info("[%s] Clear %p size=%d as zero\n", __func__, ctx->emi_virt_addr_base, ctx->emi_size);
+	lock_ret = osal_lock_sleepable_lock(&ctx->ctx_lock);
+	if (lock_ret) {
+		pr_notice("[%s] get lock fail, ret = %d\n", __func__, lock_ret);
+		return;
+	}
 	memset_io(ctx->emi_virt_addr_base, 0, ctx->emi_size);
+	osal_unlock_sleepable_lock(&ctx->ctx_lock);
 
 	conndump_set_dump_state(ctx, CORE_DUMP_INIT);
 }
@@ -1323,13 +1331,32 @@ EXPORT_SYMBOL(connsys_coredump_clean);
  *****************************************************************************/
 int connsys_coredump_setup_dump_region(void* handler)
 {
+	int lock_ret;
+	int func_ret;
+	struct connsys_dump_ctx* ctx = (struct connsys_dump_ctx*)handler;
+
+	lock_ret = osal_lock_sleepable_lock(&ctx->ctx_lock);
+	if (lock_ret) {
+		pr_notice("[%s] get lock fail, ret = %d\n", __func__, lock_ret);
+		return -1;
+	}
+
+	func_ret = connsys_coredump_setup_dump_region_internal(ctx);
+
+	osal_unlock_sleepable_lock(&ctx->ctx_lock);
+
+	return func_ret;
+}
+EXPORT_SYMBOL(connsys_coredump_setup_dump_region);
+
+static int connsys_coredump_setup_dump_region_internal(struct connsys_dump_ctx* ctx)
+{
 #define BUF_SIZE 1024
 	int ret = 0;
 	int cr_regions_idx = 0;
 	int total_mem_region;
 	int total_count;
 	int i, idx = 0, offset;
-	struct connsys_dump_ctx* ctx = (struct connsys_dump_ctx*)handler;
 	struct dump_region* curr_region = 0;
 
 	total_mem_region = conndump_get_dmp_info(
@@ -1378,7 +1405,6 @@ int connsys_coredump_setup_dump_region(void* handler)
 
 	return ctx->dump_regions_num;
 }
-EXPORT_SYMBOL(connsys_coredump_setup_dump_region);
 
 /*****************************************************************************
  * FUNCTION
@@ -1398,6 +1424,7 @@ int connsys_coredump_start(
 {
 	struct connsys_dump_ctx* ctx = (struct connsys_dump_ctx*)handler;
 	int ret = 0;
+	int lock_ret;
 	bool full_dump = false;
 	struct timespec64 begin, end, put_done;
 	struct timespec64 mem_start, mem_end, cr_start, cr_end, emi_dump_start, emi_dump_end;
@@ -1406,6 +1433,12 @@ int connsys_coredump_start(
 
 	if (ctx == NULL || ctx->conn_type < 0 || ctx->conn_type >= CONN_DEBUG_TYPE_END)
 		return 0;
+
+	lock_ret = osal_lock_sleepable_lock(&ctx->ctx_lock);
+	if (lock_ret) {
+		pr_notice("[%s] get lock fail, ret = %d\n", __func__, lock_ret);
+		return -1;
+	}
 
 	ratelimit_set_flags(&_rs, RATELIMIT_MSG_ON_RELEASE);
 
@@ -1439,8 +1472,10 @@ int connsys_coredump_start(
 		} else if (conndump_get_dump_state(ctx) == CORE_DUMP_TIMEOUT) {
 			pr_err("Coredump timeout\n");
 
-			if (coredump_mode == DUMP_MODE_RESET_ONLY)
+			if (coredump_mode == DUMP_MODE_RESET_ONLY) {
+				osal_unlock_sleepable_lock(&ctx->ctx_lock);
 				return 0;
+			}
 
 			if (ctx->callback.poll_cpupcr) {
 				pr_info("Debug dump:\n");
@@ -1458,8 +1493,10 @@ int connsys_coredump_start(
 		if (dump_property & CONNSYS_DUMP_PROPERTY_NO_WAIT) {
 			pr_info("Don't wait dump status, go to partial dump\n");
 
-			if (coredump_mode == DUMP_MODE_RESET_ONLY)
+			if (coredump_mode == DUMP_MODE_RESET_ONLY) {
+				osal_unlock_sleepable_lock(&ctx->ctx_lock);
 				return 0;
+			}
 
 			if (ctx->callback.poll_cpupcr) {
 				pr_info("Debug dump:\n");
@@ -1479,6 +1516,7 @@ int connsys_coredump_start(
 	if (coredump_mode == DUMP_MODE_RESET_ONLY) {
 		pr_info("Coredump mode=[0], print exception summary done\n");
 		conndump_set_dump_state(ctx, CORE_DUMP_INIT);
+		osal_unlock_sleepable_lock(&ctx->ctx_lock);
 		return 0;
 	}
 
@@ -1487,7 +1525,7 @@ int connsys_coredump_start(
 
 partial_dump:
 	/* TODO: move to init or other suitable place */
-	ret = connsys_coredump_setup_dump_region(ctx);
+	ret = connsys_coredump_setup_dump_region_internal(ctx);
 	if (!ret)
 		pr_err("No dump region found\n");
 
@@ -1534,6 +1572,9 @@ partial_dump:
 			timespec64_to_ms(&mem_start, &mem_end),
 			timespec64_to_ms(&emi_dump_start, &emi_dump_end));
 	}
+
+	osal_unlock_sleepable_lock(&ctx->ctx_lock);
+
 	return 0;
 }
 EXPORT_SYMBOL(connsys_coredump_start);
@@ -1670,9 +1711,16 @@ EXPORT_SYMBOL(connsys_coredump_init);
 void connsys_coredump_deinit(void* handler)
 {
 	struct connsys_dump_ctx* ctx = (struct connsys_dump_ctx*)handler;
+	int lock_ret;
 
 	if (handler == NULL)
 		return;
+
+	lock_ret = osal_lock_sleepable_lock(&ctx->ctx_lock);
+	if (lock_ret) {
+		pr_notice("[%s] get lock fail, ret = %d\n", __func__, lock_ret);
+		return;
+	}
 
 	if (ctx->emi_virt_addr_base) {
 		iounmap(ctx->emi_virt_addr_base);
@@ -1689,6 +1737,7 @@ void connsys_coredump_deinit(void* handler)
 		ctx->dump_regions = NULL;
 	}
 
+	osal_unlock_sleepable_lock(&ctx->ctx_lock);
 	conndump_free(ctx);
 }
 EXPORT_SYMBOL(connsys_coredump_deinit);
