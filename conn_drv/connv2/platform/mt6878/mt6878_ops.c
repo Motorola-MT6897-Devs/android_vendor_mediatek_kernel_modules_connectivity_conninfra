@@ -116,7 +116,7 @@ struct consys_hw_ops_struct g_consys_hw_ops_mt6878_6631 = {
 struct consys_hw_ops_struct g_consys_hw_ops_mt6878_6631_6686 = {
 	/* load from dts */
 	/* TODO: mtcmos should move to a independent module */
-	.consys_plt_clk_get_from_dts = consys_clk_get_from_dts_mt6878,
+	.consys_plt_clk_get_from_dts = consys_clk_get_from_dts_mt6878_6686,
 
 	/* clock */
 	.consys_plt_co_clock_type = consys_get_co_clock_type_mt6878,

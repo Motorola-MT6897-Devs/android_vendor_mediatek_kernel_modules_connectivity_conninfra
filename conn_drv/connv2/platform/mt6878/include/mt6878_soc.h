@@ -10,6 +10,7 @@
 
 int consys_get_co_clock_type_mt6878(void);
 int consys_clk_get_from_dts_mt6878(struct platform_device *pdev);
+int consys_clk_get_from_dts_mt6878_6686(struct platform_device *pdev);
 int consys_clock_buffer_ctrl_mt6878(unsigned int enable);
 unsigned int consys_soc_chipid_get_mt6878(void);
 void consys_clock_fail_dump_mt6878(void);

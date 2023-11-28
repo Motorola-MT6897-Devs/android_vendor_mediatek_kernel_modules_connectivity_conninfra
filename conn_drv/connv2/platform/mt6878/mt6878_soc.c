@@ -62,6 +62,42 @@ int consys_clk_get_from_dts_mt6878(struct platform_device *pdev)
 	return 0;
 }
 
+int consys_clk_get_from_dts_mt6878_6686(struct platform_device *pdev)
+{
+	mapped_addr vir_addr_0x1c00d048 = NULL;
+
+	pm_runtime_enable(&pdev->dev);
+	dev_pm_syscore_device(&pdev->dev, true);
+
+	vir_addr_0x1c00d048 =
+		ioremap(0x1C00D048, 0x4);
+
+	if (!vir_addr_0x1c00d048) {
+		pr_notice("vir_addr_0x1c00d048(%x) ioremap fail\n",
+			0x1C00D000);
+		return -1;
+	}
+
+	#ifndef CONFIG_FPGA_EARLY_PORTING
+		/* 1. Set MUX to SW control */
+		CONSYS_SET_BIT(vir_addr_0x1c00d048, (0x1U << 3));
+
+		/* Set srclkenrc settle time
+		 * 0x1C00D048[31:22] = 0x70
+		 * 0x1C00D048[21:12] = 0x29
+		 */
+		CONSYS_REG_WRITE_MASK(vir_addr_0x1c00d048,
+				(0x70 << 22), 0xFFC00000);
+		CONSYS_REG_WRITE_MASK(vir_addr_0x1c00d048,
+				(0x29 << 12), 0x3FF000);
+	#endif
+
+	if (vir_addr_0x1c00d048)
+		iounmap(vir_addr_0x1c00d048);
+
+	return 0;
+}
+
 int consys_clock_buffer_ctrl_mt6878(unsigned int enable)
 {
 	mapped_addr vir_addr_consys_gen_cksys_reg_base = NULL;
