@@ -1685,6 +1685,9 @@ void* connsys_coredump_init(
 
 	conndump_set_dump_state(ctx, CORE_DUMP_INIT);
 
+	/* Init lock */
+	osal_sleepable_lock_init(&ctx->ctx_lock);
+
 	/* Init netlink */
 	nl_cb.coredump_end = conndump_coredump_end;
 	conndump_netlink_init(ctx->conn_type, ctx, &nl_cb);
@@ -1738,6 +1741,7 @@ void connsys_coredump_deinit(void* handler)
 	}
 
 	osal_unlock_sleepable_lock(&ctx->ctx_lock);
+	osal_sleepable_lock_deinit(&ctx->ctx_lock);
 	conndump_free(ctx);
 }
 EXPORT_SYMBOL(connsys_coredump_deinit);
