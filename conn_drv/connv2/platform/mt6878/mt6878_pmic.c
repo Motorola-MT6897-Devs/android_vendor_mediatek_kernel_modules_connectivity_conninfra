@@ -876,12 +876,12 @@ static int consys_plt_pmic_event_notifier_mt6878(unsigned int id, unsigned int e
 
 static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int id, unsigned int event)
 {
-#define ATOP_DUMP_NUM_6631 7
+#define ATOP_DUMP_NUM_6631 8
 #define ABT_DUMP_NUM_6631 1
 	int ret = 0;
 	const unsigned int adie_top_cr_list[ATOP_DUMP_NUM_6631] = {
-		0x080, 0x084, 0xA00, 0xA04,
-		0xA08, 0xA0C, 0xA10,
+		0x080, 0x084, 0x0C0, 0xA00,
+		0xA04, 0xA08, 0xA0C, 0xA10,
 	};
 	const unsigned int adie_bt_cr_list[ABT_DUMP_NUM_6631] = {
 		0xA4,
