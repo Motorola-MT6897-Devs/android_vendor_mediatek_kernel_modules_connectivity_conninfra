@@ -345,6 +345,7 @@ int consys_conninfra_sleep_mt6878_gen(void);
 /****************************************************************************************************/
 #define CONSYS_GEN_CONN_RF_SPI_MST_REG_BASE_ADDR                                            0x18042000
 #define CONSYS_GEN_FM_CTRL_OFFSET_ADDR                                                      0xC
+#define CONSYS_GEN_SPI_MCU_RECORD_CTL_KIND_SEL_SHFT                                         0x320
 
 /****************************************************************************************************/
 /* Base: CONN_THERM_CTL_BASE (0x1804_0000)                                                          */

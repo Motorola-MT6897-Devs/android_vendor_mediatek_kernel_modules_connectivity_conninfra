@@ -253,4 +253,9 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6878_debug_gen(
 #define CONSYS_DBG_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR                                     0xC5C
 #define CONSYS_DBG_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR                                  0xC9C
 
+/****************************************************************************************************/
+/* Base: CONSYS_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR (0x1800_7000)                               */
+/****************************************************************************************************/
+#define CONSYS_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR                                      0x18007000
+
 #endif /* MT6878_DEBUG_GEN_H */
