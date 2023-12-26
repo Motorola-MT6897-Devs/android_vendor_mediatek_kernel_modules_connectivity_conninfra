@@ -102,6 +102,7 @@ static int consys_pmic_vant18_power_ctl_mt6878_6631_6686_lg(bool);
 static int consys_vcn13_oc_notify(struct notifier_block*, unsigned long, void*);
 static int consys_vrfio18_oc_notify(struct notifier_block*, unsigned long, void*);
 static int consys_plt_pmic_event_notifier_mt6878(unsigned int, unsigned int);
+static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int, unsigned int);
 
 const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6878_6637 = {
 	.consys_pmic_get_from_dts = consys_plt_pmic_get_from_dts_mt6878,
@@ -122,6 +123,7 @@ const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6878_6631 = {
 	.consys_pmic_bt_power_ctrl = consys_plt_pmic_no_need_ctrl_mt6878,
 	.consys_pmic_gps_power_ctrl = consys_plt_pmic_gps_power_ctrl_mt6878_6631,
 	.consys_pmic_fm_power_ctrl = consys_plt_pmic_fm_power_ctrl_mt6878_6631,
+	.consys_pmic_event_notifier = consys_plt_pmic_event_notifier_mt6878_6631,
 };
 
 const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6878_6631_6686 = {
@@ -132,6 +134,7 @@ const struct consys_platform_pmic_ops g_consys_platform_pmic_ops_mt6878_6631_668
 	.consys_pmic_bt_power_ctrl = consys_plt_pmic_no_need_ctrl_mt6878,
 	.consys_pmic_gps_power_ctrl = consys_plt_pmic_gps_power_ctrl_mt6878_6631_6686,
 	.consys_pmic_fm_power_ctrl = consys_plt_pmic_fm_power_ctrl_mt6878_6631_6686,
+	.consys_pmic_event_notifier = consys_plt_pmic_event_notifier_mt6878_6631,
 };
 
 int consys_plt_pmic_get_from_dts_mt6878(struct platform_device *pdev, struct conninfra_dev_cb* dev_cb)
@@ -865,6 +868,40 @@ static int consys_plt_pmic_event_notifier_mt6878(unsigned int id, unsigned int e
 	dump_adie_cr(SYS_SPI_TOP, adie_top_cr_list, ATOP_DUMP_NUM, "A-die TOP");
 	dump_adie_cr(SYS_SPI_WF, adie_wf_cr_list, AWF_DUMP_NUM, "A-die WF0");
 	dump_adie_cr(SYS_SPI_WF1, adie_wf_cr_list, AWF_DUMP_NUM, "A-die WF1");
+
+	consys_hw_force_conninfra_sleep();
+
+	return 0;
+}
+
+static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int id, unsigned int event)
+{
+#define ATOP_DUMP_NUM_6631 7
+#define ABT_DUMP_NUM_6631 1
+	int ret = 0;
+	const unsigned int adie_top_cr_list[ATOP_DUMP_NUM_6631] = {
+		0x080, 0x084, 0xA00, 0xA04,
+		0xA08, 0xA0C, 0xA10,
+	};
+	const unsigned int adie_bt_cr_list[ABT_DUMP_NUM_6631] = {
+		0xA4,
+	};
+
+
+	consys_pmic_debug_log_mt6878();
+
+	ret = consys_hw_force_conninfra_wakeup();
+	if (ret) {
+		pr_info("[%s] force conninfra wakeup fail\n", __func__);
+		return -1;
+	}
+
+	/* dump d-die cr */
+	consys_hw_is_bus_hang();
+
+	/* dump a-die cr */
+	dump_adie_cr(SYS_SPI_TOP, adie_top_cr_list, ATOP_DUMP_NUM_6631, "A-die TOP");
+	dump_adie_cr(SYS_SPI_BT, adie_bt_cr_list, ABT_DUMP_NUM_6631, "A-die BT");
 
 	consys_hw_force_conninfra_sleep();
 
