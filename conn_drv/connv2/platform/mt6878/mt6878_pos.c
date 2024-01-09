@@ -303,6 +303,8 @@ int connsys_a_die_cfg_mt6878(unsigned int curr_status, unsigned int next_status)
 		sleep_mode = consys_get_sleep_mode_mt6878();
 		pr_info("sleep_mode = %d\n", sleep_mode);
 		connsys_wt_slp_top_power_saving_ctrl_adie6637_mt6878_gen(adie_id, sleep_mode);
+	} else {
+		connsys_wt_slp_top_power_saving_ctrl_adie6631_mt6878_gen();
 	}
 
 #endif /* CONFIG_FPGA_EARLY_PORTING */
