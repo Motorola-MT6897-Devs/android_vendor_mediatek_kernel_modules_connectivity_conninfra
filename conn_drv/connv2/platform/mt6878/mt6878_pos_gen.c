@@ -2625,7 +2625,7 @@ int connsys_low_power_setting_mt6878_gen(void)
 
 	/* set conn_infra_off bus apb/ahb/axi layer timeout - step 1 set timing */
 	CONSYS_REG_WRITE_MASK(CONN_BUS_CR_BASE +
-		CONSYS_GEN_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_OFFSET_ADDR, 0x200, 0x7F8);
+		CONSYS_GEN_CONN_INFRA_OFF_BUS_TIMEOUT_CTRL_OFFSET_ADDR, 0x240, 0x7F8);
 
 	/* set conn_infra_off bus apb/ahb/axi layer timeout - step 2 enable function */
 	CONSYS_SET_BIT(CONN_BUS_CR_BASE +
@@ -2652,10 +2652,10 @@ int connsys_low_power_setting_mt6878_gen(void)
 		CONSYS_GEN_CONN_INFRA_VDNR_GEN_U_DEBUG_CTRL_AO_CONN_INFRA_OFF_CTRL0_OFFSET_ADDR,
 		(0x1U << 9));
 
-	/* write 0x1804d000[31:16] = 0xee90000 */
+	/* write 0x1804d000[31:16] = 0x11df0000 */
 	CONSYS_REG_WRITE_MASK(CONN_OFF_DEBUG_CTRL_AO_BASE +
 		CONSYS_GEN_CONN_INFRA_VDNR_GEN_U_DEBUG_CTRL_AO_CONN_INFRA_OFF_CTRL0_OFFSET_ADDR,
-		0xEE90000, 0xFFFF0000);
+		0x11DF0000, 0xFFFF0000);
 
 	/* write 0x1804d000[2] = 0x4 */
 	CONSYS_SET_BIT(CONN_OFF_DEBUG_CTRL_AO_BASE +
