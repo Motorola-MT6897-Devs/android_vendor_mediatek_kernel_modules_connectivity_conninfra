@@ -306,6 +306,7 @@ int connsys_a_die_cfg_mt6878(unsigned int curr_status, unsigned int next_status)
 	} else {
 		connsys_wt_slp_top_power_saving_ctrl_adie6631_mt6878_gen();
 	}
+	connsys_adie_top_ck_en_ctl_mt6878_gen(0);
 
 #endif /* CONFIG_FPGA_EARLY_PORTING */
 	return 0;

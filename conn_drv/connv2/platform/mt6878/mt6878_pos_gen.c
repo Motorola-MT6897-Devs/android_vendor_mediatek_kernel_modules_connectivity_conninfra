@@ -2112,31 +2112,49 @@ void connsys_wt_slp_top_power_saving_ctrl_adie6631_mt6878_gen(void)
 
 	/* set wt_slp CR for A-die power saving  (ref. A-die power control) */
 	CONSYS_REG_WRITE_MASK(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_SLP_CTL_OFFSET_ADDR, 0x4, 0x1F);
+		CONSYS_GEN_WB_SLP_CTL_OFFSET_ADDR, 0x7, 0x1F);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ADDR1_OFFSET_ADDR, 0xAA04);
+		CONSYS_GEN_WB_BG_ADDR1_OFFSET_ADDR, 0xA0C0);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ADDR2_OFFSET_ADDR, 0xAA08);
+		CONSYS_GEN_WB_BG_ADDR2_OFFSET_ADDR, 0xAA10);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ADDR3_OFFSET_ADDR, 0xA080);
+		CONSYS_GEN_WB_BG_ADDR3_OFFSET_ADDR, 0xAA04);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ADDR4_OFFSET_ADDR, 0xA084);
+		CONSYS_GEN_WB_BG_ADDR4_OFFSET_ADDR, 0xAA08);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ON1_OFFSET_ADDR, 0x0);
+		CONSYS_GEN_WB_BG_ADDR5_OFFSET_ADDR, 0xA080);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_ON2_OFFSET_ADDR, 0x0);
+		CONSYS_GEN_WB_BG_ADDR6_OFFSET_ADDR, 0xA084);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_ADDR7_OFFSET_ADDR, 0xAA10);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_ON1_OFFSET_ADDR, 0x38200001);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_ON2_OFFSET_ADDR, 0xFFFFFFFF);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
 		CONSYS_GEN_WB_BG_ON3_OFFSET_ADDR, 0x0);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
 		CONSYS_GEN_WB_BG_ON4_OFFSET_ADDR, 0x0);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
-		CONSYS_GEN_WB_BG_OFF1_OFFSET_ADDR, 0x0);
+		CONSYS_GEN_WB_BG_ON5_OFFSET_ADDR, 0x0);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_ON6_OFFSET_ADDR, 0x0);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_ON7_OFFSET_ADDR, 0xFFFFFFFF);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_OFF1_OFFSET_ADDR, 0x20200001);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
 		CONSYS_GEN_WB_BG_OFF2_OFFSET_ADDR, 0x0);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
 		CONSYS_GEN_WB_BG_OFF3_OFFSET_ADDR, 0x0);
 	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
 		CONSYS_GEN_WB_BG_OFF4_OFFSET_ADDR, 0x0);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_OFF5_OFFSET_ADDR, 0x0);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_OFF6_OFFSET_ADDR, 0x0);
+	CONSYS_REG_WRITE(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base +
+		CONSYS_GEN_WB_BG_OFF7_OFFSET_ADDR, 0xFFFFFFFF);
 
 	if (vir_addr_consys_gen_conn_wt_slp_ctl_reg_base)
 		iounmap(vir_addr_consys_gen_conn_wt_slp_ctl_reg_base);
