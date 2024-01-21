@@ -14,7 +14,7 @@
 #include "include/mt6878_pos.h"
 #include "include/mt6878_pos_gen.h"
 
-#define CONSYS_DUMP_BUF_SIZE 800
+#define CONSYS_DUMP_BUF_SIZE 1000
 
 struct consys_base_addr conn_reg_mt6878;
 

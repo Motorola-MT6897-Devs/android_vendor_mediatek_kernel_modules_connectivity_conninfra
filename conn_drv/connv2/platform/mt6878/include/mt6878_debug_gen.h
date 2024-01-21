@@ -11,8 +11,8 @@
  * It should not be modified by hand.
  *
  * Reference debug file,
- * - [Rxxxs] connsys_power_debug.xlsx (Modified date: 2023-08-28)
- * - [Rxxxs]conn_infra_bus_debug_ctrl.xlsx (Modified date: 2023-08-18)
+ * - [Rxxxs] connsys_power_debug_20240105.xlsx (Modified date: 2024-01-05)
+ * - [Rxxxs]conn_infra_bus_debug_ctrl_20240105.xlsx (Modified date: 2023-08-18)
  */
 
 
@@ -204,14 +204,48 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6878_debug_gen(
 #define CONSYS_DBG_GEN_WB_SLP_TOP_CK_5_OFFSET_ADDR                                                0x134
 
 /**********************************************************************************************************/
-/* Base: CONSYS_DBG_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR (0x1805_0000)                                  */
+/* Base: CONSYS_DBG_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR (0x1800_7000)                                 */
 /**********************************************************************************************************/
-#define CONSYS_DBG_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR                                         0x18050000
+#define CONSYS_DBG_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR                                        0x18007000
+#define CONSYS_DBG_GEN_WB_CK_STA_OFFSET_ADDR                                                      0xA8
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_0_OFFSET_ADDR                                                0x120
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_1_OFFSET_ADDR                                                0x124
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_2_OFFSET_ADDR                                                0x128
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_3_OFFSET_ADDR                                                0x12C
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_4_OFFSET_ADDR                                                0x130
+#define CONSYS_DBG_GEN_WB_SLP_TOP_CK_5_OFFSET_ADDR                                                0x134
 
 /**********************************************************************************************************/
 /* Base: CONSYS_DBG_GEN_CONN_RF_SPI_MST_REG_BASE_ADDR (0x1804_2000)                                       */
 /**********************************************************************************************************/
 #define CONSYS_DBG_GEN_CONN_RF_SPI_MST_REG_BASE_ADDR                                              0x18042000
+#define CONSYS_DBG_GEN_SPI_STA_OFFSET_ADDR                                                        0x0
+#define CONSYS_DBG_GEN_SPI_CRTL_OFFSET_ADDR                                                       0x4
+#define CONSYS_DBG_GEN_SPI_TOP_ADDR_OFFSET_ADDR                                                   0x50
+#define CONSYS_DBG_GEN_SPI_TOP_WDAT_OFFSET_ADDR                                                   0x54
+#define CONSYS_DBG_GEN_SPI_TOP_RDAT_OFFSET_ADDR                                                   0x58
+#define CONSYS_DBG_GEN_SPI_SLP_ADDR_OFFSET_ADDR                                                   0x60
+#define CONSYS_DBG_GEN_SLP_WDAT_OFFSET_ADDR                                                       0x64
+#define CONSYS_DBG_GEN_SPI_HSCK_CTL_OFFSET_ADDR                                                   0x108
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_ADDR_0_OFFSET_ADDR                                          0x300
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_ADDR_1_OFFSET_ADDR                                          0x304
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_ADDR_2_OFFSET_ADDR                                          0x308
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_ADDR_3_OFFSET_ADDR                                          0x30C
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_DATA_0_OFFSET_ADDR                                          0x310
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_DATA_1_OFFSET_ADDR                                          0x314
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_DATA_2_OFFSET_ADDR                                          0x318
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_DATA_3_OFFSET_ADDR                                          0x31C
+#define CONSYS_DBG_GEN_SPI_MCU_RECORD_CTL_OFFSET_ADDR                                             0x320
+
+/**********************************************************************************************************/
+/* Base: CONSYS_DBG_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR (0x1805_0000)                                  */
+/**********************************************************************************************************/
+#define CONSYS_DBG_GEN_CONN_INFRA_SYSRAM_BASE_OFFSET_ADDR                                         0x18050000
+
+/**********************************************************************************************************/
+/* Base: CONSYS_DBG_GEN_INST2_CONN_RF_SPI_MST_REG_BASE_ADDR (0x1804_6000)                                 */
+/**********************************************************************************************************/
+#define CONSYS_DBG_GEN_INST2_CONN_RF_SPI_MST_REG_BASE_ADDR                                        0x18046000
 #define CONSYS_DBG_GEN_SPI_STA_OFFSET_ADDR                                                        0x0
 #define CONSYS_DBG_GEN_SPI_CRTL_OFFSET_ADDR                                                       0x4
 #define CONSYS_DBG_GEN_SPI_TOP_ADDR_OFFSET_ADDR                                                   0x50
@@ -250,12 +284,8 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6878_debug_gen(
 /**********************************************************************************************************/
 /* Base: INFRACFG_AO_REG_BASE (0x1000_1000)                                                               */
 /**********************************************************************************************************/
+#define CONSYS_DBG_GEN_INFRASYS_PROTECT_RDY_STA_0_OFFSET_ADDR                                     0xC4C
 #define CONSYS_DBG_GEN_INFRASYS_PROTECT_RDY_STA_1_OFFSET_ADDR                                     0xC5C
 #define CONSYS_DBG_GEN_MCU_CONNSYS_PROTECT_RDY_STA_0_OFFSET_ADDR                                  0xC9C
-
-/****************************************************************************************************/
-/* Base: CONSYS_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR (0x1800_7000)                               */
-/****************************************************************************************************/
-#define CONSYS_GEN_INST2_CONN_WT_SLP_CTL_REG_BASE_ADDR                                      0x18007000
 
 #endif /* MT6878_DEBUG_GEN_H */
