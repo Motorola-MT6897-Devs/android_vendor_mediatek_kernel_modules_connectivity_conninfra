@@ -1161,6 +1161,12 @@ void consys_print_power_debug_dbg_level_2_mt6878_debug_gen(
 		"C71", 0x18046000 + CONSYS_DBG_GEN_SPI_CRTL_OFFSET_ADDR,
 		CONSYS_REG_READ(vir_addr_consys_dbg_gen_inst2_conn_rf_spi_mst_reg_base_mt6878 +
 			CONSYS_DBG_GEN_SPI_CRTL_OFFSET_ADDR));
+
+	/* C72 */
+	update_debug_read_info_mt6878_debug_gen(pdbg_level_2_info,
+		"C72", 0x18001000 + CONSYS_DBG_GEN_CONN_INFRA_CFG_GPS_FUNCTION_ENABLE,
+		CONSYS_REG_READ(CONN_CFG_ON_BASE +
+			CONSYS_DBG_GEN_CONN_INFRA_CFG_GPS_FUNCTION_ENABLE));
 }
 
 void consys_print_bus_debug_dbg_level_1_mt6878_debug_gen(

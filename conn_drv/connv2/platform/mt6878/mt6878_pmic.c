@@ -878,6 +878,7 @@ static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int id, unsigned 
 {
 #define ATOP_DUMP_NUM_6631 8
 #define ABT_DUMP_NUM_6631 1
+#define AGPS_DUMP_NUM_6631 2
 	int ret = 0;
 	const unsigned int adie_top_cr_list[ATOP_DUMP_NUM_6631] = {
 		0x080, 0x084, 0x0C0, 0xA00,
@@ -886,7 +887,9 @@ static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int id, unsigned 
 	const unsigned int adie_bt_cr_list[ABT_DUMP_NUM_6631] = {
 		0xA4,
 	};
-
+	const unsigned int adie_gps_cr_list[AGPS_DUMP_NUM_6631] = {
+		0x500, 0x501,
+	};
 
 	consys_pmic_debug_log_mt6878();
 
@@ -902,6 +905,7 @@ static int consys_plt_pmic_event_notifier_mt6878_6631(unsigned int id, unsigned 
 	/* dump a-die cr */
 	dump_adie_cr(SYS_SPI_TOP, adie_top_cr_list, ATOP_DUMP_NUM_6631, "A-die TOP");
 	dump_adie_cr(SYS_SPI_BT, adie_bt_cr_list, ABT_DUMP_NUM_6631, "A-die BT");
+	dump_adie_cr(SYS_SPI_GPS, adie_gps_cr_list, AGPS_DUMP_NUM_6631, "A-die GPS");
 
 	consys_hw_force_conninfra_sleep();
 

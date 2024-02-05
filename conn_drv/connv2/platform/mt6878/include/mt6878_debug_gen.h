@@ -175,6 +175,7 @@ void consys_print_bus_slpprot_debug_dbg_level_0_mt6878_debug_gen(
 /**********************************************************************************************************/
 /* Base: CONN_CFG_ON_BASE (0x1800_1000)                                                                   */
 /**********************************************************************************************************/
+#define CONSYS_DBG_GEN_CONN_INFRA_CFG_GPS_FUNCTION_ENABLE                                         0x20C
 #define CONSYS_DBG_GEN_CONN_INFRA_CFG_RC_STATUS_OFFSET_ADDR                                       0x344
 #define CONSYS_DBG_GEN_CONN_INFRA_CONN2AP_SLP_STATUS_OFFSET_ADDR                                  0x404
 #define CONSYS_DBG_GEN_CONN_INFRA_CONN2AP_EMI_SLP_STATUS_OFFSET_ADDR                              0x408
