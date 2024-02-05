@@ -20,6 +20,8 @@ static struct work_struct g_conninfra_irq_rst_work;
 
 static atomic_t g_conn_infra_bus_timeout_irq_flag;
 
+mapped_addr g_vir_addr_systimer;
+
 int consys_co_clock_type_mt6989(void)
 {
 	const struct conninfra_conf *conf;
@@ -138,6 +140,13 @@ void consys_set_if_pinmux_mt6989(unsigned int enable)
 static void conninfra_irq_rst_handler(struct work_struct *work)
 {
 	pr_notice("[%s] ++++++\n", __func__);
+
+	if (g_vir_addr_systimer) {
+		pr_info("[%s] 0x1cc10008=[0x%x]\n", __func__,
+			CONSYS_REG_READ(g_vir_addr_systimer + 0x8));
+		pr_info("[%s] 0x1cc1000c=[0x%x]\n", __func__,
+			CONSYS_REG_READ(g_vir_addr_systimer + 0xc));
+	}
 	conninfra_is_bus_hang();
 	conninfra_trigger_whole_chip_rst(CONNDRV_TYPE_CONNINFRA,
 									"conninfra bus timeout irq handling");
@@ -163,6 +172,12 @@ irqreturn_t consys_irq_handler_mt6989(int irq, void* data)
 int consys_register_irq_mt6989(struct platform_device *pdev)
 {
 	int ret = 0;
+
+	pr_info("[mtk debug] ioremap systimer addr 0x1cc10000\n");
+	g_vir_addr_systimer = ioremap(0x1cc10000, 0x100);
+
+	if (!g_vir_addr_systimer)
+		pr_notice("[mtk debug] g_vir_addr_systimer is not defined\n");
 
 	g_conn_infra_bus_timeout_irq = platform_get_irq(pdev, 0);
 
@@ -198,4 +213,7 @@ void consys_unregister_irq_mt6989(void)
 	if (g_conn_infra_bus_timeout_irq_register) {
 		free_irq(g_conn_infra_bus_timeout_irq, NULL);
 	}
+
+	if (g_vir_addr_systimer)
+		iounmap(g_vir_addr_systimer);
 }
