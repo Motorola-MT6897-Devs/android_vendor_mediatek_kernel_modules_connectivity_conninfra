@@ -119,12 +119,10 @@ static void _dump_uart_gpio_state(char* tag)
 	scp_pd = CONSYS_REG_READ(vir_0x11C3_0000 + 0x0080);
 	scp_pu = CONSYS_REG_READ(vir_0x11C3_0000 + 0x0090);
 
-	pr_info("[%s][%s][0x%08x][0x%08x][0x%08x][0x%08x]",
-		__func__, tag, aux, dir, scp_pd, scp_pu);
-	pr_info("GPIO 141 SCP_WB_UTXD\taux=[%d]\tdir=[%s]\tPD/PU=[%d/%d]",
+	pr_info("[%s][%s][0x%08x][0x%08x][0x%08x][0x%08x] GPIO 141 SCP_WB_UTXD aux=[%d] dir=[%s] PD/PU=[%d/%d] 142 SCP_WB_URXD aux=[%d] dir=[%s] PD/PU=[%d/%d]",
+		__func__, tag, aux, dir, scp_pd, scp_pu,
 		((aux & 0x700000) >> 20), (GET_BIT(dir, 13)? "OUT" : "IN"),
-		GET_BIT(scp_pd, 10), GET_BIT(scp_pu, 10));
-	pr_info("GPIO 142 SCP_WB_URXD\taux=[%d]\tdir=[%s]\tPD/PU=[%d/%d]",
+		GET_BIT(scp_pd, 10), GET_BIT(scp_pu, 10),
 		((aux & 0x7000000) >> 24), (GET_BIT(dir, 14)? "OUT" : "IN"),
 		GET_BIT(scp_pd, 9), GET_BIT(scp_pu, 9));
 }
