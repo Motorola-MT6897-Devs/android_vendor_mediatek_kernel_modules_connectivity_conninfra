@@ -181,7 +181,7 @@ int consys_plt_pmic_get_from_dts_mt6878(struct platform_device *pdev, struct con
 		pr_err("Regulator_get VANT18 fail\n");
 		reg_VANT18 = NULL;
 	}
-	reg_buckboost = devm_regulator_get_optional(&pdev->dev, "rt6160-buckboost");
+	reg_buckboost = devm_regulator_get_optional(&pdev->dev, "rt6160-buckboost-2");
 	if (IS_ERR(reg_buckboost)) {
 		pr_info("Regulator_get buckboost fail\n");
 		reg_buckboost = NULL;
